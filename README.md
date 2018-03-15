@@ -1,37 +1,22 @@
-## Welcome to GitHub Pages
+## Welcome to Preo Bot Pages
 
-You can use the [editor on GitHub](https://github.com/mexeniz/preo-bot/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Preo Bot is a preorder helper bot for Line platform.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Development
 
-### Markdown
+Python
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Commands
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mexeniz/preo-bot/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+1. !preorder <name>
+2. !add <user> <order> <total>
+3. !del <user> <order> <total>
+4. !endorder
+5. !list <name|ID>
+6. !help 
+```
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Please create an issue if you find bugs or have a comment.
