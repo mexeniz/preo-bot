@@ -4,7 +4,24 @@ Preo Bot is a preorder helper bot for Line platform.
 
 ### Development
 
-Python
+Language: Python
+
+##### Prerequisite
+
+- line-bot-sdk
+- flask
+
+```
+pip install line-bot-sdk flask
+```
+
+#### Run Server
+
+```
+export LINE_CHANNEL_SECRET=YOUR_LINE_CHANNEL_SECRET
+export LINE_CHANNEL_ACCESS_TOKEN=YOUR_LINE_CHANNEL_ACCESS_TOKEN
+python main.py
+```
 
 ### Commands
 
@@ -14,7 +31,7 @@ Python
 3. !del <user> <order> <total>
 4. !endorder
 5. !list <name|ID>
-6. !help 
+6. !help
 ```
 
 ### Support or Contact
