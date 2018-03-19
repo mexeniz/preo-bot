@@ -1,0 +1,3 @@
+gunicorn==19.7.1
+line-bot-sdk==1.5.0
+flask==0.12.2
