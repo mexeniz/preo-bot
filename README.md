@@ -10,9 +10,17 @@ Language: Python
 
 - line-bot-sdk
 - flask
+- pytest
 
 ```
-pip install line-bot-sdk flask
+pip install line-bot-sdk flask pytest
+```
+
+#### Test
+
+```
+cd test
+pytest
 ```
 
 #### Run Server
