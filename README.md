@@ -11,15 +11,19 @@ Language: Python
 - line-bot-sdk
 - flask
 - pytest
+- gunicorn
 
 ```
-pip install line-bot-sdk flask pytest
+pip install line-bot-sdk flask pytest gunicorn
 ```
 
 #### Test
 
+We use pytest as a test runner.
+The name of test functions in 'tests' directory must begin with 'test' or else pytest cannot run those test cases.
+
 ```
-cd test
+cd tests
 pytest
 ```
 
@@ -31,14 +35,20 @@ export LINE_CHANNEL_ACCESS_TOKEN=YOUR_LINE_CHANNEL_ACCESS_TOKEN
 python main.py
 ```
 
+#### Deployment
+
+This project can deploy on Heroku platform.
+
 ### Commands
 
+- A chat room can have only one existing order list at the same time.
+
 ```
-1. !preorder <name>
-2. !add <user> <order> <total>
-3. !del <user> <order> <total>
-4. !endorder
-5. !list <name|ID>
+1. !new
+2. !add <order> <total>
+3. !del <order> <total>
+4. !end
+5. !list
 6. !help
 ```
 
