@@ -21,28 +21,37 @@ MOCK_ORDERS = [
     # first room
     ['10001', '20001', 'milk', 1],
     ['10001', '20001', 'steak', 1],
-    ['10001', '20002', 'milk', 1],
+    ['10001', '20002', 'milk', 2],
     ['10001', '20003', 'milk', 1],
-    ['10001', '20004', 'bread', 1],
+    ['10001', '20004', 'bread', 2],
     ['10001', '20004', 'milk', 1],
     # second room
     ['10002', '20001', 'milk', 1],
-    ['10002', '20001', 'steak', 1],
+    ['10002', '20001', 'steak', 3],
     ['10002', '20002', 'milk', 1],
-    ['10002', '20003', 'milk', 1],
+    ['10002', '20003', 'milk', 3],
     ['10002', '20004', 'bread', 1],
-    ['10002', '20004', 'milk', 1]
+    ['10002', '20004', 'milk', 2],
+    ['10002', '20005', 'tea', 1]
 ]
 
 
 def clean_db():
-    print("Remove DB at %s" % (TEST_DB_PATH))
-    os.remove(TEST_DB_PATH)
+    if os.path.exists(TEST_DB_PATH):
+        print("Remove DB at %s" % (TEST_DB_PATH))
+        os.remove(TEST_DB_PATH)
 
 
 def insert_mock_data(order):
     for data in MOCK_ORDERS:
         order.set_order(data[0], data[1], data[2], data[3])
+
+def count_item_amount(rows, item_name):
+    amount = 0
+    for row in rows:
+        if row[2] == item_name:
+            amount = amount + row[3]
+    return amount
 
 
 def test_order_init():
@@ -96,8 +105,8 @@ def test_order_get_item_order():
     order = Order(TEST_DB_PATH)
     insert_mock_data(order)
     rows = order.get_item_order('10001', 'rice')
-    assert len(rows) == 0
+    assert count_item_amount(rows, 'rice') == 0
     rows = order.get_item_order('10001', 'milk')
-    assert len(rows) == 4
+    assert count_item_amount(rows, 'milk') == 5
     rows = order.get_item_order('10001', 'bread')
-    assert len(rows) == 1
+    assert count_item_amount(rows, 'bread') == 2
