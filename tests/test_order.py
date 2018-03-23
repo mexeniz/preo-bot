@@ -18,12 +18,20 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 
 
 MOCK_ORDERS = [
+    # first room
     ['10001', '20001', 'milk', 1],
     ['10001', '20001', 'steak', 1],
     ['10001', '20002', 'milk', 1],
     ['10001', '20003', 'milk', 1],
-    ['10001', '20004', 'bread', 2],
-    ['10001', '20004', 'milk', 1]
+    ['10001', '20004', 'bread', 1],
+    ['10001', '20004', 'milk', 1],
+    # second room
+    ['10002', '20001', 'milk', 1],
+    ['10002', '20001', 'steak', 1],
+    ['10002', '20002', 'milk', 1],
+    ['10002', '20003', 'milk', 1],
+    ['10002', '20004', 'bread', 1],
+    ['10002', '20004', 'milk', 1]
 ]
 
 
@@ -61,3 +69,35 @@ def test_order_del_order():
         order.del_order(data[0], data[1], data[2])
     rows = order.list_all()
     assert len(rows) == 0
+
+def test_order_get_room_order():
+    clean_db()
+    order = Order(TEST_DB_PATH)
+    insert_mock_data(order)
+    rows = order.get_room_order('10000')
+    assert len(rows) == 0
+    rows = order.get_room_order('10001')
+    assert len(rows) == 6
+
+def test_order_get_user_order():
+    clean_db()
+    order = Order(TEST_DB_PATH)
+    insert_mock_data(order)
+    rows = order.get_user_order('10001', '20000')
+    assert len(rows) == 0
+    rows = order.get_user_order('10001', '20001')
+    assert len(rows) == 2
+    rows = order.get_user_order('10001', '20004')
+    assert len(rows) == 2
+
+def test_order_get_item_order():
+    # TODO(M) : Sum amount from record instead
+    clean_db()
+    order = Order(TEST_DB_PATH)
+    insert_mock_data(order)
+    rows = order.get_item_order('10001', 'rice')
+    assert len(rows) == 0
+    rows = order.get_item_order('10001', 'milk')
+    assert len(rows) == 4
+    rows = order.get_item_order('10001', 'bread')
+    assert len(rows) == 1
