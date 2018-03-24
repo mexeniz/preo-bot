@@ -19,7 +19,8 @@ class OrderQuery:
         INSERT OR REPLACE INTO orders (room_id, user_id, item_name, amount)
         VALUES (?,?,?,?)"""
 
-    DEL_ORDER = "DELETE FROM orders WHERE room_id = ? and user_id = ? and item_name = ?"
+    DEL_ORDER_BY_USER = "DELETE FROM orders WHERE room_id = ? and user_id = ? and item_name = ?"
+    DEL_ORDER_BY_ROOM = "DELETE FROM orders WHERE room_id = ?"
 
     SELECT_ALL_ORDER = "SELECT * FROM orders"
     SELECT_ORDER_BY_ROOM = "SELECT * FROM orders WHERE room_id = ?"
@@ -50,9 +51,15 @@ class Order:
         self.db.commit()
 
     def del_order(self, room_id, user_id, item_name):
-        "Delete an order from the table"
+        "Delete an order from the table by user_id and item_name"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.DEL_ORDER, [room_id, user_id, item_name])
+        cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_id, item_name])
+        self.db.commit()
+
+    def del_room_order(self, room_id):
+        "Delete room orders from the table by room_id"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.DEL_ORDER_BY_ROOM, [room_id])
         self.db.commit()
 
     def list_all(self):

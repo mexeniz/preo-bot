@@ -95,6 +95,17 @@ def test_order_del_order():
     rows = order.list_all()
     assert len(rows) == 0
 
+def test_order_del_room_order():
+    clean_db()
+    order = Order(TEST_DB_PATH)
+    insert_mock_data(order)
+    order.del_room_order('10001')
+    rows = order.get_room_order('10001')
+    assert len(rows) == 0
+    order.del_room_order('10002')
+    rows = order.get_room_order('10002')
+    assert len(rows) == 0
+
 def test_order_get_room_order():
     clean_db()
     order = Order(TEST_DB_PATH)
