@@ -11,7 +11,7 @@ class OrderQuery:
             room_id  CHAR(128) NOT NULL,
 			user_id CHAR(128) NOT NULL,
 			item_name VARCHAR(255) NOT NULL,
-			amount INT NOT NULL,
+			amount INT NOT NULL CHECK(amount > 0),
 			CONSTRAINT PK_Order PRIMARY KEY (room_id, user_id, item_name));
             """
 

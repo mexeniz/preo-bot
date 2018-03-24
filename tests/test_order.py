@@ -1,3 +1,5 @@
+import pytest
+import sqlite3
 import os
 import sys
 import inspect
@@ -34,7 +36,11 @@ MOCK_ORDERS = [
     ['10002', '20004', 'milk', 2],
     ['10002', '20005', 'tea', 1]
 ]
-
+INVALID_MOCK_ORDERS = [
+    ['10002', '20004', 'bread', -5],
+    ['10002', '20004', 'milk', 0],
+    ['10002', '20005', 'tea', -1]
+]
 
 def clean_db():
     if os.path.exists(TEST_DB_PATH):
@@ -61,13 +67,23 @@ def test_order_init():
     assert isinstance(order, Order)
 
 
-def test_order_set_order():
+def test_order_set_order_success():
     clean_db()
     order = Order(TEST_DB_PATH)
     for data in MOCK_ORDERS:
         order.set_order(data[0], data[1], data[2], data[3])
     rows = order.list_all()
     assert len(rows) == len(MOCK_ORDERS)
+
+def test_order_set_order_fail():
+    # Test orders table constraint
+    clean_db()
+    order = Order(TEST_DB_PATH)
+    for data in INVALID_MOCK_ORDERS:
+        with pytest.raises(sqlite3.IntegrityError):
+            order.set_order(data[0], data[1], data[2], data[3])
+    rows = order.list_all()
+    assert len(rows) == 0
 
 
 def test_order_del_order():
@@ -100,7 +116,6 @@ def test_order_get_user_order():
     assert len(rows) == 2
 
 def test_order_get_item_order():
-    # TODO(M) : Sum amount from record instead
     clean_db()
     order = Order(TEST_DB_PATH)
     insert_mock_data(order)
