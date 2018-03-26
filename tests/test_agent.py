@@ -47,6 +47,13 @@ def test_bot_group_parser():
     assert GroupParser.parse_text_group("Help") == None 
     assert GroupParser.parse_text_group("Help5") == None 
     assert GroupParser.parse_text_group("Help help") == None
+    # From Real Command
+    assert GroupParser.parse_text_group("!new") == {"cmd":"new"}
+    assert GroupParser.parse_text_group("!add food 3") == {"cmd":"add", "order":"food", "num":"3"}
+    assert GroupParser.parse_text_group("!del food food 3") == {"cmd":"del", "order":"food food", "num":"3"}
+    assert GroupParser.parse_text_group("!end") == {"cmd":"end"}
+    assert GroupParser.parse_text_group("!list") == {"cmd":"list"}
+    assert GroupParser.parse_text_group("!help") == {"cmd":"help"}
 
 ###########################
 # Agent test cases
