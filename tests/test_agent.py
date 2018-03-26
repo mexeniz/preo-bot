@@ -28,23 +28,25 @@ def test_bot_cmd_parse_command():
 # GroupParser test cases
 ###########################
 
-def test_bot_text_group_parser():
-    # return None because last group must be number
-    assert GroupParser.parse_text_group("a b c") == None
+def test_bot_group_parser():
     # Return correctly 
-    assert GroupParser.parse_text_group("a b 5") == {"cmd":"a", "order":"b", "num": "5"} 
-    # Return correctly 
-    assert GroupParser.parse_text_group("a b c 5") == {"cmd":"a", "order":"b c", "num": "5"} 
+    assert GroupParser.parse_text_group("!a b 5") == {"cmd":"a", "order":"b", "num": "5"} 
+    assert GroupParser.parse_text_group("!a b c 5") == {"cmd":"a", "order":"b c", "num": "5"} 
     # Not match regex, return None 
-    assert GroupParser.parse_text_group("a b") == None
-    # Not match regex, return None 
-    assert GroupParser.parse_text_group("a 5") == None
-    # Not match regex, return None 
-    assert GroupParser.parse_text_group("HelloWorld") == None
+    assert GroupParser.parse_text_group("!a b") == None
+    assert GroupParser.parse_text_group("!a 5") == None
+    assert GroupParser.parse_text_group("!a b 3 d") == None
+    assert GroupParser.parse_text_group("!a 5 b") == None
+    assert GroupParser.parse_text_group("a b 5") == None
     # "order" should handle special char correclty
-    assert GroupParser.parse_text_group("add Hamburger,Steak 5") == {"cmd":"add", "order":"Hamburger,Steak", "num":"5"}
+    assert GroupParser.parse_text_group("!add Hamburger,Steak 5") == {"cmd":"add", "order":"Hamburger,Steak", "num":"5"}
     # "num" only count last number; other number will be in "order"
-    assert GroupParser.parse_text_group("add Hamburger,Steak 5 19") == {"cmd":"add", "order":"Hamburger,Steak 5", "num":"19"}
+    assert GroupParser.parse_text_group("!add Hamburger,Steak 5 19") == {"cmd":"add", "order":"Hamburger,Steak 5", "num":"19"}
+    # Single Command 
+    assert GroupParser.parse_text_group("!Help") == {"cmd":"Help"}
+    assert GroupParser.parse_text_group("Help") == None 
+    assert GroupParser.parse_text_group("Help5") == None 
+    assert GroupParser.parse_text_group("Help help") == None
 
 ###########################
 # Agent test cases

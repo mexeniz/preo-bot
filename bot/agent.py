@@ -26,25 +26,32 @@ class BotCMD():
         return command
 
 class GroupParser():
-    """Class for parsing text into several part"""
-    order_regex = "^(\w+) (.*) (\d{1,})$"
-    text_group = ["cmd", "order", "num"]
+    """
+    Class for parsing text into several parts
+    Support several regexes
+    """
+    order_regexes = ["^!(\w+)$", "^!(\w+) (.*) (\d{1,})$"]
+    text_groups = [ ["cmd"], ["cmd", "order", "num"] ]
 
     @classmethod
     def parse_text_group(cls, text):
-        m = re.match(GroupParser.order_regex, text)
-        if not m:
-            return None 
-
-        result = {}
-        try:
-            i = 0
-            for match in GroupParser.text_group:
-                i += 1
-                result[match] = m.group(i);
-        except:
-            return None 
-        return result
+        result = {} 
+        i = -1
+        for order_regex in GroupParser.order_regexes:
+            i += 1
+            m = re.match(order_regex, text)
+            print text, m
+            if m == None:
+                continue 
+            try:
+                j = 0
+                for match in GroupParser.text_groups[i]:
+                    j += 1
+                    result[match] = m.group(j);
+                return result
+            except:
+                continue
+        return None 
 
 class Agent():
 
