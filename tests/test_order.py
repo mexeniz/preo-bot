@@ -21,25 +21,25 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 
 MOCK_ORDERS = [
     # first room
-    ['10001', '20001', 'milk', 1],
-    ['10001', '20001', 'steak', 1],
-    ['10001', '20002', 'milk', 2],
-    ['10001', '20003', 'milk', 1],
-    ['10001', '20004', 'bread', 2],
-    ['10001', '20004', 'milk', 1],
+    ['10001', 'finn', 'milk', 1],
+    ['10001', 'finn', 'steak', 1],
+    ['10001', 'poe', 'milk', 2],
+    ['10001', 'luke', 'milk', 1],
+    ['10001', 'rey', 'bread', 2],
+    ['10001', 'rey', 'milk', 1],
     # second room
-    ['10002', '20001', 'milk', 1],
-    ['10002', '20001', 'steak', 3],
-    ['10002', '20002', 'milk', 1],
-    ['10002', '20003', 'milk', 3],
-    ['10002', '20004', 'bread', 1],
-    ['10002', '20004', 'milk', 2],
-    ['10002', '20005', 'tea', 1]
+    ['10002', 'hux', 'milk', 1],
+    ['10002', 'hux', 'steak', 3],
+    ['10002', 'snoke', 'milk', 1],
+    ['10002', 'ren', 'milk', 3],
+    ['10002', 'phasma', 'bread', 1],
+    ['10002', 'phasma', 'milk', 2],
+    ['10002', 'krennic', 'tea', 1]
 ]
 INVALID_MOCK_ORDERS = [
-    ['10002', '20004', 'bread', -5],
-    ['10002', '20004', 'milk', 0],
-    ['10002', '20005', 'tea', -1]
+    ['10002', 'hux', 'bread', -5],
+    ['10002', 'hux', 'milk', 0],
+    ['10002', 'krennic', 'tea', -1]
 ]
 
 def clean_db():
@@ -119,11 +119,11 @@ def test_order_get_user_order():
     clean_db()
     order = Order(TEST_DB_PATH)
     insert_mock_data(order)
-    rows = order.get_user_order('10001', '20000')
+    rows = order.get_user_order('10001', 'noone')
     assert len(rows) == 0
-    rows = order.get_user_order('10001', '20001')
+    rows = order.get_user_order('10001', 'finn')
     assert len(rows) == 2
-    rows = order.get_user_order('10001', '20004')
+    rows = order.get_user_order('10001', 'rey')
     assert len(rows) == 2
 
 def test_order_get_item_order():
