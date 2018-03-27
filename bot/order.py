@@ -9,22 +9,22 @@ class OrderQuery:
     INIT_SCHEMA = """
             CREATE TABLE IF NOT EXISTS orders (
             room_id  CHAR(128) NOT NULL,
-			user_id CHAR(128) NOT NULL,
+			user_name CHAR(128) NOT NULL,
 			item_name VARCHAR(255) NOT NULL,
 			amount INT NOT NULL CHECK(amount > 0),
-			CONSTRAINT PK_Order PRIMARY KEY (room_id, user_id, item_name));
+			CONSTRAINT PK_Order PRIMARY KEY (room_id, user_name, item_name));
             """
 
     SET_ORDER = """
-        INSERT OR REPLACE INTO orders (room_id, user_id, item_name, amount)
+        INSERT OR REPLACE INTO orders (room_id, user_name, item_name, amount)
         VALUES (?,?,?,?)"""
 
-    DEL_ORDER_BY_USER = "DELETE FROM orders WHERE room_id = ? and user_id = ? and item_name = ?"
+    DEL_ORDER_BY_USER = "DELETE FROM orders WHERE room_id = ? and user_name = ? and item_name = ?"
     DEL_ORDER_BY_ROOM = "DELETE FROM orders WHERE room_id = ?"
 
     SELECT_ALL_ORDER = "SELECT * FROM orders"
     SELECT_ORDER_BY_ROOM = "SELECT * FROM orders WHERE room_id = ?"
-    SELECT_ORDER_BY_USER = "SELECT * FROM orders WHERE room_id = ? and user_id = ?"
+    SELECT_ORDER_BY_USER = "SELECT * FROM orders WHERE room_id = ? and user_name = ?"
     SELECT_ORDER_BY_ITEM = "SELECT * FROM orders WHERE room_id = ? and item_name = ?"
 
 class Order:
@@ -41,19 +41,19 @@ class Order:
         self.__create_schema()
 
 
-    def set_order(self, room_id, user_id, item_name, amount):
+    def set_order(self, room_id, user_name, item_name, amount):
         """
         Insert an order into the table for user in chat room.
         Update the order instead if one exists.
         """
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SET_ORDER, [room_id, user_id, item_name, amount])
+        cursor.execute(OrderQuery.SET_ORDER, [room_id, user_name, item_name, amount])
         self.db.commit()
 
-    def del_order(self, room_id, user_id, item_name):
-        "Delete an order from the table by user_id and item_name"
+    def del_order(self, room_id, user_name, item_name):
+        "Delete an order from the table by user_name and item_name"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_id, item_name])
+        cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_name, item_name])
         self.db.commit()
 
     def del_room_order(self, room_id):
@@ -76,10 +76,10 @@ class Order:
         rows = cursor.fetchall()
         return rows
 
-    def get_user_order(self, room_id, user_id):
-        "List orders by room_id and user_id"
+    def get_user_order(self, room_id, user_name):
+        "List orders by room_id and user_name"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER, [room_id, user_id])
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER, [room_id, user_name])
         rows = cursor.fetchall()
         return rows
 
