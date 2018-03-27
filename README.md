@@ -27,6 +27,13 @@ cd tests
 pytest
 ```
 
+Test with output on console and verbose.
+
+```
+pytest -sv
+```
+
+
 #### Run Server
 
 ```
@@ -38,18 +45,58 @@ python main.py
 #### Deployment
 
 This project can deploy on Heroku platform.
+Heroku platform needs requirements.txt to build an app environment and Procfile to run python app.
 
 ### Commands
 
-- A chat room can have only one existing order list at the same time.
+A chat room can have only one existing order list at the same time.
+
+- Create a new order with name if any. One chat room can have only one opened order at the same time.
 
 ```
-1. !new
-2. !add <order> <total>
-3. !del <order> <total>
-4. !end
-5. !list
-6. !help
+!new <order_name>
+```
+
+- Add new item to the order list
+
+```
+!add <user_name> <item> <amount>
+```
+
+**Remark** : This command will replace the existing item order.
+For example, Preo bot receives a sequence of command like this:
+
+```
+!add Jack Milk 3
+!add Bob Milk 4
+!add Jack Milk 5
+!add Bob Milk 2
+!add Jack Milk 1
+```
+Finally, the saved order for Jake will be 1 Milk and the saved order for Bob will be 2 Milk.
+
+- Remove an item from the order list
+
+```
+!del <user_name> <item> <amount>
+```
+
+- Close the current order.
+
+```
+!end
+```
+
+- Show all items in the order list
+
+```
+!list
+```
+
+- Show help message
+
+```
+!help
 ```
 
 ### Support or Contact
