@@ -68,6 +68,10 @@ def test_bot_group_parser():
 # Init agent and mock object
 agent = Agent()
 
+def test_agent_new():
+    assert agent.room_dict != None
+    assert len(agent.room_dict) == 0
+    assert agent.order_db != None
 
 def test_agent_handle_text_message_fail():
     # Parser error

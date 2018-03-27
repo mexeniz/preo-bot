@@ -7,6 +7,9 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+from order import (
+    Order
+)
 import re
 
 
@@ -76,7 +79,9 @@ class Agent():
     """Chatbot agent"""
 
     def __init__(self):
+        # Map room_id with order property
         self.room_dict = {}
+        self.order_db = Order()
 
     def handle_text_message(self, event):
         "Handle text message event."
