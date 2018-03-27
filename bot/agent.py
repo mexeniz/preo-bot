@@ -83,6 +83,26 @@ class Agent():
         self.room_dict = {}
         self.order_db = Order()
 
+    def __handle_new_order(self, **kwargs):
+        return "new order name=%s" % (kwargs['name'])
+
+    def __handle_add_order(self, **kwargs):
+        return "add order user=%s order=%s amount=%d" % (
+            kwargs['user_name'], kwargs['item'], kwargs['amount'])
+
+    def __handle_del_order(self, **kwargs):
+        return "del order user=%s order=%s amount=%d" % (
+            kwargs['user_name'], kwargs['item'], kwargs['amount'])
+
+    def __handle_end_order(self, **kwargs):
+        return "end order"
+
+    def __handle_list_order(self, **kwargs):
+        return "list order"
+
+    def __handle_help(self, **kwargs):
+        return self.HELP_MESSAGE
+
     def handle_text_message(self, event):
         "Handle text message event."
         group_text = GroupParser.parse_text_group(event.message.text)
@@ -108,19 +128,19 @@ class Agent():
         # Handle group_text
         try:
             if cmd == BotCMD.NEW_ORDER:
-                response = "new order name=%s" % (group_text['name'])
+                response = self.__handle_new_order(name=group_text['name'])
             elif cmd == BotCMD.ADD_ORDER:
-                response = "add order user=%s order=%s amount=%d" % (
-                    group_text['user_name'], group_text['item'], int(group_text['num']))
+                response = self.__handle_add_order(user_name=
+                    group_text['user_name'], item=group_text['item'], amount=int(group_text['num']))
             elif cmd == BotCMD.DEL_ORDER:
-                response = "del order user=%s order=%s amoount=%d" % (
-                    group_text['user_name'], group_text['item'], int(group_text['num']))
+                response = self.__handle_del_order(user_name=
+                    group_text['user_name'], item=group_text['item'], amount=int(group_text['num']))
             elif cmd == BotCMD.END_ORDER:
-                response = "end order"
+                response = self.__handle_end_order()
             elif cmd == BotCMD.LIST_ORDER:
-                response = "list order"
+                response = self.__handle_list_order()
             elif cmd == BotCMD.HELP:
-                response = self.HELP_MESSAGE
+                response = self.__handle_help()
             return response
         except Exception as e:
             return None

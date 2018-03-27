@@ -26,7 +26,12 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-from bot.agent import (
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+# Include paths for module search
+sys.path.insert(0, os.path.join(currentdir, 'bot'))
+from agent import (
     Agent
 )
 
