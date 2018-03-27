@@ -14,6 +14,9 @@ from agent import (
 from linebot.models import (
     MessageEvent, TextMessage
 )
+from linebot.models import (
+    SourceGroup, SourceRoom, SourceUser
+)
 
 ###########################
 # BotCMD test cases
@@ -64,10 +67,38 @@ def test_bot_group_parser():
 
 # Init agent and mock object
 agent = Agent()
-text_message = TextMessage(text="mock message")
-mock_event = MessageEvent(timestamp=123, source='123',
-                          reply_token='123', message=text_message)
 
 
-def test_agent_handle_text_message():
-    assert agent.handle_text_message(mock_event) == mock_event.message.text
+def test_agent_handle_text_message_fail():
+    # Parser error
+    text_message = TextMessage(text="mock message")
+    mock_event = MessageEvent(timestamp=123, source='123',
+                              reply_token='123', message=text_message)
+    assert agent.handle_text_message(mock_event) == None
+    # Command error
+    text_message = TextMessage(text="!yatta order")
+    mock_event = MessageEvent(timestamp=123, source='123',
+                              reply_token='123', message=text_message)
+    assert agent.handle_text_message(mock_event) == None
+
+
+def test_agent_handle_text_message_group_source():
+    group_source = SourceGroup(group_id="G20001", user_id="U10001")
+    text_message = TextMessage(text="!new myOrder")
+    mock_event = MessageEvent(timestamp=123, source=group_source,
+                              reply_token='123', message=text_message)
+    assert agent.handle_text_message(mock_event) != None
+
+def test_agent_handle_text_message_room_source():
+    room_source = SourceRoom(room_id="R20001", user_id="U10001")
+    text_message = TextMessage(text="!new myOrder")
+    mock_event = MessageEvent(timestamp=123, source=room_source,
+                              reply_token='123', message=text_message)
+    assert agent.handle_text_message(mock_event) != None
+
+def test_agent_handle_text_message_user_source():
+    user_source = SourceUser(user_id="U10001")
+    text_message = TextMessage(text="!new myOrder")
+    mock_event = MessageEvent(timestamp=123, source=user_source,
+                              reply_token='123', message=text_message)
+    assert agent.handle_text_message(mock_event) != None
