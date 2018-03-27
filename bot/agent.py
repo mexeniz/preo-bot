@@ -14,9 +14,18 @@ class BotCMD():
     UNKNOWN_CMD = 0
     NEW_ORDER = 1
     ADD_ORDER = 2
+    DEL_ORDER = 3
+    END_ORDER = 4
+    LIST_ORDER = 5
+    HELP = 6
+
     CMD_DICT = {
         "new" : NEW_ORDER,
-        "add" : ADD_ORDER
+        "add" : ADD_ORDER,
+        "del" : DEL_ORDER,
+        "end" : END_ORDER,
+        "list" : LIST_ORDER,
+        "help" : HELP
     }
     @classmethod
     def parse_command(cls, text):
@@ -30,19 +39,18 @@ class GroupParser():
     Class for parsing text into several parts
     Support several regexes
     """
-    order_regexes = ["^!(\w+)$", "^!(\w+) (.*) (\d{1,})$"]
-    text_groups = [ ["cmd"], ["cmd", "order", "num"] ]
+    order_regexes = ["^!(\w+)$", "^!(\w+) (\w+)$", "^!(\w+) (\w+) (\w+) (\d{1,})$"]
+    text_groups = [ ["cmd"], ["cmd", "name"], ["cmd", "user_name", "item", "num"] ]
 
     @classmethod
     def parse_text_group(cls, text):
-        result = {} 
+        result = {}
         i = -1
         for order_regex in GroupParser.order_regexes:
             i += 1
             m = re.match(order_regex, text)
-            print text, m
             if m == None:
-                continue 
+                continue
             try:
                 j = 0
                 for match in GroupParser.text_groups[i]:
@@ -51,7 +59,7 @@ class GroupParser():
                 return result
             except:
                 continue
-        return None 
+        return None
 
 class Agent():
 
