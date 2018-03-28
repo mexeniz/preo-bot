@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pytest
 import os
 import sys
@@ -69,6 +72,13 @@ def test_bot_group_parser():
     # From Real Command (mixed and upper case)
     assert GroupParser.parse_text_group("!DeL food food 3") == {"cmd":"DeL", "user_name":"food", "item":"food", "num":"3"}
     assert GroupParser.parse_text_group("!END") == {"cmd":"END"}
+
+    # Testing Thai Language
+    assert GroupParser.parse_text_group("!new เพลิน") == {"cmd":"new", "name": "เพลิน"}
+    assert GroupParser.parse_text_group("!add แบ้ง อาหาร 3") == {"cmd":"add", "user_name":"แบ้ง", "item":"อาหาร", "num":"3"}
+    assert GroupParser.parse_text_group("!add เอ็ม ผัดกะเพราหมูสับไม่ใส่กะเพรา 5") == {"cmd":"add", "user_name":"เอ็ม", "item":"ผัดกะเพราหมูสับไม่ใส่กะเพรา", "num":"5"}
+    assert GroupParser.parse_text_group("!del กิ๊กกัน โลกทั้งใบ") == {"cmd":"del", "user_name":"กิ๊กกัน", "item":"โลกทั้งใบ"}
+    assert GroupParser.parse_text_group("!del คน มนุษย์ 3") == {"cmd":"del", "user_name":"คน", "item":"มนุษย์", "num":"3"}
 
 ###########################
 # Agent test cases
