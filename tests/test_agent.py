@@ -106,3 +106,21 @@ def test_agent_handle_text_message_user_source():
     mock_event = MessageEvent(timestamp=123, source=user_source,
                               reply_token='123', message=text_message)
     assert agent.handle_text_message(mock_event) != None
+
+def test_agent_handle_new_order():
+    assert agent._Agent__handle_new_order(room_id="123", name="123") != None
+
+def test_agent_handle_add_order():
+    assert agent._Agent__handle_add_order(room_id="123", user_name="123", item="123", amount=1) != None
+
+def test_agent_handle_del_order():
+    assert agent._Agent__handle_del_order(room_id="123", user_name="123", item="123") != None
+
+def test_agent_handle_end_order():
+    assert agent._Agent__handle_end_order(room_id="123") != None
+
+def test_agent_handle_list_order():
+    assert agent._Agent__handle_list_order(room_id="123") != None
+
+def test_agent_handle_help():
+    assert agent._Agent__handle_help() == Agent.HELP_MESSAGE

@@ -5,7 +5,7 @@ import sqlite3
 DEFAULT_DB_PATH = "/tmp/preo-bot.db"
 
 class OrderQuery:
-    "SQL Querys for Order class"
+    "SQL Queries for Order class"
     INIT_SCHEMA = """
             CREATE TABLE IF NOT EXISTS orders (
             room_id  CHAR(128) NOT NULL,
