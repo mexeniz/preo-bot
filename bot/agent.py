@@ -47,8 +47,8 @@ class GroupParser():
     """
 
     # TODO(M) : Fix reqex to support Thai item and user_name.
-    order_regexes = ["^!(\w+)$", "^!(\w+) (\w+)$",
-                     "^!(\w+) (\w+) (\w+) (\d{1,})$"]
+    order_regexes = [r"^!(\w+)$", r"^!(\w+) (\w+)$",
+                     r"^!(\w+) (\w+) (\w+) (\d{1,})$"]
     text_groups = [["cmd"], ["cmd", "name"],
                    ["cmd", "user_name", "item", "num"]]
 
@@ -73,10 +73,9 @@ class GroupParser():
 
 
 class Agent():
+    """Chatbot agent for handling incoming message event"""
     HELP_MESSAGE = "\n".join(["Help message", "!new <order_name>", "!add <user_name> <item> <amount>",
                               "!del <user_name> <item> <amount>", "!end", "!list", "!help"])
-
-    """Chatbot agent"""
 
     def __init__(self):
         # Map room_id with order property
@@ -84,23 +83,45 @@ class Agent():
         self.order_db = Order()
 
     def __handle_new_order(self, **kwargs):
-        return "new order name=%s" % (kwargs['name'])
+        """
+        Create new order list.
+        Store order list properties such as name in room_dict using room_id as a key.
+        """
+        return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'], kwargs['name'])
 
     def __handle_add_order(self, **kwargs):
-        return "add order user=%s order=%s amount=%d" % (
-            kwargs['user_name'], kwargs['item'], kwargs['amount'])
+        """
+        Add an order from user into database with room_id, user_name, item and amount.
+        """
+        return "add order\nroom_id=%s user=%s order=%s amount=%d" % (kwargs['room_id'],
+                                                                     kwargs['user_name'], kwargs['item'], kwargs['amount'])
 
     def __handle_del_order(self, **kwargs):
-        return "del order user=%s order=%s amount=%d" % (
-            kwargs['user_name'], kwargs['item'], kwargs['amount'])
+        """
+        Delete an order from database by room_id, user_name and item.
+        """
+        return "del order\nroom_id=%s user=%s order=%s" % (kwargs['room_id'],
+                                                           kwargs['user_name'], kwargs['item'])
 
     def __handle_end_order(self, **kwargs):
-        return "end order"
+        """
+        Close the list of orders by room_id and remove room_id key from room_dict.
+        Any orders from this room will be deleted from database.
+        Error message will be return if an order list is not created yet.
+        """
+        return "end order list\nroom_id=%s" % (kwargs['room_id'])
 
     def __handle_list_order(self, **kwargs):
-        return "list order"
+        """
+        Show the list of orders by room_id.
+        Error message will be return if an order list is not created yet.
+        """
+        return "show order list\nroom_id=%s" % (kwargs['room_id'])
 
     def __handle_help(self, **kwargs):
+        """
+        Show a list of bot commands.
+        """
         return self.HELP_MESSAGE
 
     def handle_text_message(self, event):
@@ -128,17 +149,18 @@ class Agent():
         # Handle group_text
         try:
             if cmd == BotCMD.NEW_ORDER:
-                response = self.__handle_new_order(name=group_text['name'])
+                response = self.__handle_new_order(
+                    room_id=room_id, name=group_text['name'])
             elif cmd == BotCMD.ADD_ORDER:
-                response = self.__handle_add_order(user_name=
-                    group_text['user_name'], item=group_text['item'], amount=int(group_text['num']))
+                response = self.__handle_add_order(room_id=room_id, user_name=group_text['user_name'],
+                                                   item=group_text['item'], amount=int(group_text['num']))
             elif cmd == BotCMD.DEL_ORDER:
-                response = self.__handle_del_order(user_name=
-                    group_text['user_name'], item=group_text['item'], amount=int(group_text['num']))
+                response = self.__handle_del_order(room_id=room_id,
+                                                   user_name=group_text['user_name'], item=group_text['item'])
             elif cmd == BotCMD.END_ORDER:
-                response = self.__handle_end_order()
+                response = self.__handle_end_order(room_id=room_id)
             elif cmd == BotCMD.LIST_ORDER:
-                response = self.__handle_list_order()
+                response = self.__handle_list_order(room_id=room_id)
             elif cmd == BotCMD.HELP:
                 response = self.__handle_help()
             return response
