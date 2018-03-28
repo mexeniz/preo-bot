@@ -78,7 +78,7 @@ Finally, the saved order for Jake will be 1 Milk and the saved order for Bob wil
 - Remove an item from the order list
 
 ```
-!del <user_name> <item> <amount>
+!del <user_name> <item>
 ```
 
 - Close the current order.

@@ -45,15 +45,13 @@ def test_bot_cmd_parse_command():
 def test_bot_group_parser():
     # Return correctly
     assert GroupParser.parse_text_group("!a b c 5") == {"cmd":"a", "user_name":"b", "item":"c", "num": "5"}
+    assert GroupParser.parse_text_group("!a b c") == {"cmd":"a", "user_name":"b", "item":"c"}
     assert GroupParser.parse_text_group("!a b") == {"cmd":"a", "name":"b"}
     assert GroupParser.parse_text_group("!a 5") == {"cmd":"a", "name":"5"}
     # Not match regex, return None
     assert GroupParser.parse_text_group("!a b c -1") == None
-    assert GroupParser.parse_text_group("!a 5 b") == None
     assert GroupParser.parse_text_group("a b 5") == None
     assert GroupParser.parse_text_group("!add user1 Steak 5 19") == None
-    # "item" should handle special char correclty
-    assert GroupParser.parse_text_group("!add user1 Hamburger 5") == {"cmd":"add", "user_name":"user1", "item":"Hamburger", "num":"5"}
     # Single Command
     assert GroupParser.parse_text_group("!Help") == {"cmd":"Help"}
     assert GroupParser.parse_text_group("Help") == None
@@ -62,10 +60,15 @@ def test_bot_group_parser():
     # From Real Command
     assert GroupParser.parse_text_group("!new ploen") == {"cmd":"new", "name": "ploen"}
     assert GroupParser.parse_text_group("!add food food 3") == {"cmd":"add", "user_name":"food", "item":"food", "num":"3"}
+    assert GroupParser.parse_text_group("!add user1 Hamburger 5") == {"cmd":"add", "user_name":"user1", "item":"Hamburger", "num":"5"}
+    assert GroupParser.parse_text_group("!del food food") == {"cmd":"del", "user_name":"food", "item":"food"}
     assert GroupParser.parse_text_group("!del food food 3") == {"cmd":"del", "user_name":"food", "item":"food", "num":"3"}
     assert GroupParser.parse_text_group("!end") == {"cmd":"end"}
     assert GroupParser.parse_text_group("!list") == {"cmd":"list"}
     assert GroupParser.parse_text_group("!help") == {"cmd":"help"}
+    # From Real Command (mixed and upper case)
+    assert GroupParser.parse_text_group("!DeL food food 3") == {"cmd":"DeL", "user_name":"food", "item":"food", "num":"3"}
+    assert GroupParser.parse_text_group("!END") == {"cmd":"END"}
 
 ###########################
 # Agent test cases

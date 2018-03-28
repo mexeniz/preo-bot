@@ -49,9 +49,10 @@ class GroupParser():
     """
 
     # TODO(M) : Fix reqex to support Thai item and user_name.
-    order_regexes = [r"^!(\w+)$", r"^!(\w+) (\w+)$",
+    order_regexes = [r"^!(\w+)$", r"^!(\w+) (\w+)$", r"^!(\w+) (\w+) (\w+)$",
                      r"^!(\w+) (\w+) (\w+) (\d{1,})$"]
     text_groups = [["cmd"], ["cmd", "name"],
+                   ["cmd", "user_name", "item"],
                    ["cmd", "user_name", "item", "num"]]
 
     @classmethod
