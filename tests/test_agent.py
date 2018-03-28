@@ -31,6 +31,12 @@ def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("help") == BotCMD.HELP
     assert BotCMD.parse_command("") == BotCMD.UNKNOWN_CMD
     assert BotCMD.parse_command(None) == BotCMD.UNKNOWN_CMD
+    # Mixed case
+    assert BotCMD.parse_command("NeW") == BotCMD.NEW_ORDER
+    assert BotCMD.parse_command("lISt") == BotCMD.LIST_ORDER
+    # Upper case
+    assert BotCMD.parse_command("ADD") == BotCMD.ADD_ORDER
+    assert BotCMD.parse_command("HELP") == BotCMD.HELP
 
 ###########################
 # GroupParser test cases

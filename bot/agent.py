@@ -35,8 +35,10 @@ class BotCMD():
     @classmethod
     def parse_command(cls, text):
         command = cls.UNKNOWN_CMD
-        if text and text in cls.CMD_DICT:
-            command = cls.CMD_DICT[text.lower().strip()]
+        if text:
+            text = text.strip().lower()
+            if text in cls.CMD_DICT:
+                command = cls.CMD_DICT[text]
         return command
 
 
