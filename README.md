@@ -2,9 +2,11 @@
 
 Preo Bot is a preorder helper bot for Line platform.
 
+Version 0.0.1
+
 ### Development
 
-Language: Python
+Language: Python3
 
 ##### Prerequisite
 
