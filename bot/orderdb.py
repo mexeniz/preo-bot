@@ -27,7 +27,7 @@ class OrderQuery:
     SELECT_ORDER_BY_USER = "SELECT * FROM orders WHERE room_id = ? and user_name = ?"
     SELECT_ORDER_BY_ITEM = "SELECT * FROM orders WHERE room_id = ? and item_name = ?"
 
-class Order:
+class OrderDB:
     "Order model for managing orders table"
 
     def __create_schema(self):

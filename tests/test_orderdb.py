@@ -8,8 +8,8 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 # Include paths for module search
 sys.path.insert(0, os.path.join(parentdir, 'bot'))
-from order import (
-    Order
+from orderdb import (
+    OrderDB
 )
 
 TEST_DB_PATH = "/tmp/test-preo-bot.db"
@@ -60,25 +60,25 @@ def count_item_amount(rows, item_name):
     return amount
 
 
-def test_order_init():
+def test_orderdb_init():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     assert order != None
-    assert isinstance(order, Order)
+    assert isinstance(order, OrderDB)
 
 
-def test_order_set_order_success():
+def test_orderdb_set_order_success():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     for data in MOCK_ORDERS:
         order.set_order(data[0], data[1], data[2], data[3])
     rows = order.list_all()
     assert len(rows) == len(MOCK_ORDERS)
 
-def test_order_set_order_fail():
+def test_orderdb_set_order_fail():
     # Test orders table constraint
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     for data in INVALID_MOCK_ORDERS:
         with pytest.raises(sqlite3.IntegrityError):
             order.set_order(data[0], data[1], data[2], data[3])
@@ -86,18 +86,18 @@ def test_order_set_order_fail():
     assert len(rows) == 0
 
 
-def test_order_del_order():
+def test_orderdb_del_order():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     insert_mock_data(order)
     for data in MOCK_ORDERS:
         order.del_order(data[0], data[1], data[2])
     rows = order.list_all()
     assert len(rows) == 0
 
-def test_order_del_room_order():
+def test_orderdb_del_room_order():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     insert_mock_data(order)
     order.del_room_order('10001')
     rows = order.get_room_order('10001')
@@ -106,18 +106,18 @@ def test_order_del_room_order():
     rows = order.get_room_order('10002')
     assert len(rows) == 0
 
-def test_order_get_room_order():
+def test_orderdb_get_room_order():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     insert_mock_data(order)
     rows = order.get_room_order('10000')
     assert len(rows) == 0
     rows = order.get_room_order('10001')
     assert len(rows) == 6
 
-def test_order_get_user_order():
+def test_orderdb_get_user_order():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     insert_mock_data(order)
     rows = order.get_user_order('10001', 'noone')
     assert len(rows) == 0
@@ -126,9 +126,9 @@ def test_order_get_user_order():
     rows = order.get_user_order('10001', 'rey')
     assert len(rows) == 2
 
-def test_order_get_item_order():
+def test_orderdb_get_item_order():
     clean_db()
-    order = Order(TEST_DB_PATH)
+    order = OrderDB(TEST_DB_PATH)
     insert_mock_data(order)
     rows = order.get_item_order('10001', 'rice')
     assert count_item_amount(rows, 'rice') == 0

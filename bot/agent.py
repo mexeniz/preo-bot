@@ -7,8 +7,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-from order import (
-    Order
+from orderdb import (
+    OrderDB
 )
 import re
 
@@ -86,7 +86,7 @@ class Agent():
     def __init__(self):
         # Map room_id with order property
         self.room_dict = {}
-        self.order_db = Order()
+        self.order_db = OrderDB()
 
     def __handle_new_order(self, **kwargs):
         """
