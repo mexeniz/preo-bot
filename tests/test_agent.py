@@ -21,6 +21,8 @@ from linebot.models import (
     SourceGroup, SourceRoom, SourceUser
 )
 
+TEST_DB_PATH = "/tmp/test-preo-bot.db"
+
 ###########################
 # BotCMD test cases
 ###########################
@@ -30,6 +32,7 @@ def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("add") == BotCMD.ADD_ORDER
     assert BotCMD.parse_command("del") == BotCMD.DEL_ORDER
     assert BotCMD.parse_command("list") == BotCMD.LIST_ORDER
+    assert BotCMD.parse_command("close") == BotCMD.CLOSE_ORDER
     assert BotCMD.parse_command("end") == BotCMD.END_ORDER
     assert BotCMD.parse_command("help") == BotCMD.HELP
     assert BotCMD.parse_command("") == BotCMD.UNKNOWN_CMD
@@ -67,11 +70,13 @@ def test_bot_group_parser():
     assert GroupParser.parse_text_group("!del food food") == {"cmd":"del", "user_name":"food", "item":"food"}
     assert GroupParser.parse_text_group("!del food food 3") == {"cmd":"del", "user_name":"food", "item":"food", "num":"3"}
     assert GroupParser.parse_text_group("!list") == {"cmd":"list"}
+    assert GroupParser.parse_text_group("!close") == {"cmd":"close"}
     assert GroupParser.parse_text_group("!end") == {"cmd":"end"}
     assert GroupParser.parse_text_group("!help") == {"cmd":"help"}
     # From Real Command (mixed and upper case)
     assert GroupParser.parse_text_group("!DeL food food 3") == {"cmd":"DeL", "user_name":"food", "item":"food", "num":"3"}
     assert GroupParser.parse_text_group("!END") == {"cmd":"END"}
+    assert GroupParser.parse_text_group("!ClOse") == {"cmd":"ClOse"}
 
     # Testing Thai Language
     assert GroupParser.parse_text_group("!new เพลิน") == {"cmd":"new", "name": "เพลิน"}
@@ -85,7 +90,7 @@ def test_bot_group_parser():
 ###########################
 
 # Init agent and mock object
-agent = Agent()
+agent = Agent(db_path=TEST_DB_PATH)
 
 def test_agent_new():
     assert agent.roomOrders != None
@@ -136,6 +141,9 @@ def test_agent_handle_del_order():
 
 def test_agent_handle_list_order():
     assert agent._Agent__handle_list_order(room_id="123") != None
+
+def test_agent_handle_close_order():
+    assert agent._Agent__handle_close_order(room_id="123") != None
 
 def test_agent_handle_end_order():
     assert agent._Agent__handle_end_order(room_id="123") != None
