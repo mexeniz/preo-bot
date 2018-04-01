@@ -10,6 +10,9 @@ from linebot.models import (
 from orderdb import (
     OrderDB
 )
+from order import (
+    RoomOrder, Order
+)
 import re
 
 
@@ -85,15 +88,15 @@ class Agent():
 
     def __init__(self):
         # Map room_id with order property
-        self.room_dict = {}
-        self.order_db = OrderDB()
+        self.roomOrders = RoomOrder()
 
     def __handle_new_order(self, **kwargs):
         """
         Create new order list.
         Store order list properties such as name in room_dict using room_id as a key.
         """
-        return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'], kwargs['name'])
+        # return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'], kwargs['name'])
+        return self.roomOrders.new_order(room=kwargs['room_id'], order_name=kwargs['name'])
 
     def __handle_add_order(self, **kwargs):
         """
@@ -115,14 +118,16 @@ class Agent():
         Any orders from this room will be deleted from database.
         Error message will be return if an order list is not created yet.
         """
-        return "end order list\nroom_id=%s" % (kwargs['room_id'])
+        # return "end order list\nroom_id=%s" % (kwargs['room_id'])
+        return self.roomOrders.end_order(room=kwargs['room_id'])
 
     def __handle_list_order(self, **kwargs):
         """
         Show the list of orders by room_id.
         Error message will be return if an order list is not created yet.
         """
-        return "show order list\nroom_id=%s" % (kwargs['room_id'])
+        # return "show order list\nroom_id=%s" % (kwargs['room_id'])
+        return self.roomOrders.list_order(room=kwargs['room_id'])
 
     def __handle_help(self, **kwargs):
         """

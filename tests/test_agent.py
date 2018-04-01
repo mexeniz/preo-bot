@@ -29,8 +29,8 @@ def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("new") == BotCMD.NEW_ORDER
     assert BotCMD.parse_command("add") == BotCMD.ADD_ORDER
     assert BotCMD.parse_command("del") == BotCMD.DEL_ORDER
-    assert BotCMD.parse_command("end") == BotCMD.END_ORDER
     assert BotCMD.parse_command("list") == BotCMD.LIST_ORDER
+    assert BotCMD.parse_command("end") == BotCMD.END_ORDER
     assert BotCMD.parse_command("help") == BotCMD.HELP
     assert BotCMD.parse_command("") == BotCMD.UNKNOWN_CMD
     assert BotCMD.parse_command(None) == BotCMD.UNKNOWN_CMD
@@ -66,8 +66,8 @@ def test_bot_group_parser():
     assert GroupParser.parse_text_group("!add user1 Hamburger 5") == {"cmd":"add", "user_name":"user1", "item":"Hamburger", "num":"5"}
     assert GroupParser.parse_text_group("!del food food") == {"cmd":"del", "user_name":"food", "item":"food"}
     assert GroupParser.parse_text_group("!del food food 3") == {"cmd":"del", "user_name":"food", "item":"food", "num":"3"}
-    assert GroupParser.parse_text_group("!end") == {"cmd":"end"}
     assert GroupParser.parse_text_group("!list") == {"cmd":"list"}
+    assert GroupParser.parse_text_group("!end") == {"cmd":"end"}
     assert GroupParser.parse_text_group("!help") == {"cmd":"help"}
     # From Real Command (mixed and upper case)
     assert GroupParser.parse_text_group("!DeL food food 3") == {"cmd":"DeL", "user_name":"food", "item":"food", "num":"3"}
@@ -88,9 +88,8 @@ def test_bot_group_parser():
 agent = Agent()
 
 def test_agent_new():
-    assert agent.room_dict != None
-    assert len(agent.room_dict) == 0
-    assert agent.order_db != None
+    assert agent.roomOrders != None
+    assert len(agent.roomOrders.rooms) == 0
 
 def test_agent_handle_text_message_fail():
     # Parser error
@@ -135,11 +134,11 @@ def test_agent_handle_add_order():
 def test_agent_handle_del_order():
     assert agent._Agent__handle_del_order(room_id="123", user_name="123", item="123") != None
 
-def test_agent_handle_end_order():
-    assert agent._Agent__handle_end_order(room_id="123") != None
-
 def test_agent_handle_list_order():
     assert agent._Agent__handle_list_order(room_id="123") != None
+
+def test_agent_handle_end_order():
+    assert agent._Agent__handle_end_order(room_id="123") != None
 
 def test_agent_handle_help():
     assert agent._Agent__handle_help() == Agent.HELP_MESSAGE
