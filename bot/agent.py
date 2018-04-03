@@ -89,16 +89,20 @@ class Agent():
                               "!del <user_name> <item> <amount>", "!end", "!list", "!help"])
 
     def __init__(self, **kwargs):
-        self.roomOrders = RoomOrder()
-        # TODO(M) : Read 'db_path' from kwargs then pass it to OrderDB
+        if 'db_path' in kwargs:
+            self.room_orders = RoomOrder(kwargs['db_path'])
+        else:
+            # use default config
+            self.room_orders = RoomOrder()
 
     def __handle_new_order(self, **kwargs):
         """
         Create new order list.
         Store order list properties such as name in room_dict using room_id as a key.
         """
-        # return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'], kwargs['name'])
-        return self.roomOrders.new_order(room=kwargs['room_id'], order_name=kwargs['name'])
+        # return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'],
+        # kwargs['name'])
+        return self.room_orders.new_order(room=kwargs['room_id'], order_name=kwargs['name'])
 
     def __handle_add_order(self, **kwargs):
         """
@@ -120,8 +124,7 @@ class Agent():
         Error message will be return if an order list is not created yet.
         """
         # return "show order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.roomOrders.list_order(room=kwargs['room_id'])
-
+        return self.room_orders.list_order(room=kwargs['room_id'])
 
     def __handle_close_order(self, **kwargs):
         """
@@ -129,7 +132,7 @@ class Agent():
         Error message will be return if an order list is not created yet.
         """
         # return "close order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.roomOrders.close_order(room=kwargs['room_id'])
+        return self.room_orders.close_order(room=kwargs['room_id'])
 
     def __handle_end_order(self, **kwargs):
         """
@@ -138,7 +141,7 @@ class Agent():
         Error message will be return if an order list is not created yet.
         """
         # return "end order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.roomOrders.end_order(room=kwargs['room_id'])
+        return self.room_orders.end_order(room=kwargs['room_id'])
 
     def __handle_help(self, **kwargs):
         """

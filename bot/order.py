@@ -1,16 +1,17 @@
 from response import Response
-
+from orderdb import OrderDB
 
 class RoomOrder:
-    def __init__(self):
+    def __init__(self, db_path=OrderDB.DEFAULT_DB_PATH):
         self.rooms = {}
+        self.order_db = OrderDB(db_path)
 
     def new_order(self, room, order_name):
-        if room in self.rooms:
-            return Response.text(Response.REP_DUP_ORDERLIST)
-        else:
+        if room not in self.rooms:
             self.rooms[room] = Order(order_name)
             return Response.text(Response.REP_NEW_ORDERLIST_CREATED, order_name)
+        else:
+            return Response.text(Response.REP_DUP_ORDERLIST)
 
     def get_order(self, room):
         return self.rooms[room]
@@ -51,7 +52,7 @@ class Order:
         else:
             return Response.text(Response.REP_ORDERLIST_CLOSED, self.name)
 
-    def setEnable(self, flag):
+    def set_enable(self, flag):
         self.enable = flag
 
     def order_by_menu_string(self):
@@ -72,7 +73,7 @@ class Order:
         return Response.text(Response.REP_ORDER_PRINT, self.name, self.order_by_menu_string)
 
     def list_order_by_user(self):
-        return Response.text(Response.REP_ORDER_PRINT, self.name, self.order_by_menu_user)
+        return Response.text(Response.REP_ORDER_PRINT, self.name, self.order_by_user_string)
 
     def __str__(self):
         return self.order_by_user_string()

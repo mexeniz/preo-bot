@@ -2,8 +2,6 @@
 
 import sqlite3
 
-DEFAULT_DB_PATH = "/tmp/preo-bot.db"
-
 class OrderQuery:
     "SQL Queries for Order class"
     INIT_SCHEMA = """
@@ -29,6 +27,7 @@ class OrderQuery:
 
 class OrderDB:
     "Order model for managing orders table"
+    DEFAULT_DB_PATH = "/tmp/preo-bot.db"
 
     def __create_schema(self):
         "Init table orders in sqlite database"

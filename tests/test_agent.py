@@ -93,8 +93,7 @@ def test_bot_group_parser():
 agent = Agent(db_path=TEST_DB_PATH)
 
 def test_agent_new():
-    assert agent.roomOrders != None
-    assert len(agent.roomOrders.rooms) == 0
+    assert agent.room_orders != None
 
 def test_agent_handle_text_message_fail():
     # Parser error
