@@ -6,31 +6,36 @@ class RoomOrder:
         self.rooms = {}
         self.order_db = OrderDB(db_path)
 
-    def new_order(self, room, order_name):
-        if room not in self.rooms:
-            self.rooms[room] = Order(order_name)
+    def new_order(self, room_id, order_name):
+        if room_id not in self.rooms:
+            self.rooms[room_id] = Order(order_name)
             return Response.text(Response.REP_NEW_ORDERLIST_CREATED, order_name)
         else:
             return Response.text(Response.REP_DUP_ORDERLIST)
 
-    def get_order(self, room):
-        return self.rooms[room]
+    def get_order(self, room_id):
+        return self.rooms[room_id]
 
-    def list_order(self, room):
+    def list_order(self, room_id):
         try:
-            order = self.rooms[room]
+            order = self.rooms[room_id]
             return Response.text(Response.REP_SUMMARY_ORDERLIST, order.name, order.order_by_menu_string(), order.order_by_user_string())
         except KeyError:
             return None
 
-    def close_order(self, room):
-        name = self.rooms[room].name
-        return Response.text(Response.REP_ORDERLIST_CLOSED, name)
+    def close_order(self, room_id):
+        try:
+            name = self.rooms[room_id].name
+            return Response.text(Response.REP_ORDERLIST_CLOSED, name)
+        except KeyError:
+            return None
 
-    def end_order(self, room):
-        name = self.rooms[room].name
-        del self.rooms[room]
-        return Response.text(Response.REP_END_ORDERLIST, name)
+    def end_order(self, room_id):
+        try:
+            name = self.rooms[room_id].name
+            return Response.text(Response.REP_END_ORDERLIST, name)
+        except KeyError:
+            return None
 
 
 class Order:

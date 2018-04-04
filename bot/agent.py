@@ -100,9 +100,7 @@ class Agent():
         Create new order list.
         Store order list properties such as name in room_dict using room_id as a key.
         """
-        # return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'],
-        # kwargs['name'])
-        return self.room_orders.new_order(room=kwargs['room_id'], order_name=kwargs['name'])
+        return self.room_orders.new_order(kwargs['room_id'], kwargs['name'])
 
     def __handle_add_order(self, **kwargs):
         """
@@ -123,16 +121,14 @@ class Agent():
         Show the list of orders by room_id.
         Error message will be return if an order list is not created yet.
         """
-        # return "show order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.room_orders.list_order(room=kwargs['room_id'])
+        return self.room_orders.list_order(kwargs['room_id'])
 
     def __handle_close_order(self, **kwargs):
         """
         Close the list of orders by room_id. After that, user can only list the order.
         Error message will be return if an order list is not created yet.
         """
-        # return "close order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.room_orders.close_order(room=kwargs['room_id'])
+        return self.room_orders.close_order(kwargs['room_id'])
 
     def __handle_end_order(self, **kwargs):
         """
@@ -140,8 +136,7 @@ class Agent():
         Any orders from this room will be deleted from database.
         Error message will be return if an order list is not created yet.
         """
-        # return "end order list\nroom_id=%s" % (kwargs['room_id'])
-        return self.room_orders.end_order(room=kwargs['room_id'])
+        return self.room_orders.end_order(kwargs['room_id'])
 
     def __handle_help(self, **kwargs):
         """

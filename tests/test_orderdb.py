@@ -44,7 +44,7 @@ INVALID_MOCK_ORDERS = [
 
 def clean_db():
     if os.path.exists(TEST_DB_PATH):
-        print("Remove DB at %s" % (TEST_DB_PATH))
+        # clean old test database before init new OrderDB
         os.remove(TEST_DB_PATH)
 
 

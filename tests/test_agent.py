@@ -14,6 +14,9 @@ sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from agent import (
     Agent, BotCMD, GroupParser
 )
+from order import (
+    RoomOrder
+)
 from linebot.models import (
     MessageEvent, TextMessage
 )
@@ -93,7 +96,8 @@ def test_bot_group_parser():
 agent = Agent(db_path=TEST_DB_PATH)
 
 def test_agent_new():
-    assert agent.room_orders != None
+    assert isinstance(agent, Agent)
+    assert isinstance(agent.room_orders, RoomOrder)
 
 def test_agent_handle_text_message_fail():
     # Parser error
