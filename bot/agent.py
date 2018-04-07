@@ -11,7 +11,7 @@ from orderdb import (
     OrderDB
 )
 from order import (
-    RoomOrder, Order
+    RoomOrder
 )
 import re
 

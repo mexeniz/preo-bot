@@ -3,41 +3,43 @@ from orderdb import OrderDB
 
 class RoomOrder:
     def __init__(self, db_path=OrderDB.DEFAULT_DB_PATH):
-        self.rooms = {}
+        self.rooms_enable = {}
         self.order_db = OrderDB(db_path)
 
     def new_order(self, room_id, order_name):
-        if room_id not in self.rooms:
-            self.rooms[room_id] = Order(order_name)
+        if room_id not in self.rooms_enable:
+            self.rooms_enable[room_id] = True
             return Response.text(Response.REP_NEW_ORDERLIST_CREATED, order_name)
         else:
             return Response.text(Response.REP_DUP_ORDERLIST)
 
-    def get_order(self, room_id):
-        return self.rooms[room_id]
+    def list_all(self):
+        pass
 
     def list_order(self, room_id):
-        try:
-            order = self.rooms[room_id]
-            return Response.text(Response.REP_SUMMARY_ORDERLIST, order.name, order.order_by_menu_string(), order.order_by_user_string())
-        except KeyError:
-            return None
+        text = ""
+        order_list = self.order_db.get_room_order(room_id)
+        for order in order_list:
+            text += __order_print_user_item_amount(order) + "\n"
+        text = text[:-1]
+        return Response.text(Response.REP_SUMMARY_ORDERLIST, text)
 
     def close_order(self, room_id):
         try:
-            name = self.rooms[room_id].name
-            return Response.text(Response.REP_ORDERLIST_CLOSED, name)
+            self.rooms_enable[room_id] = False
+            return Response.text(Response.REP_ORDERLIST_CLOSED)
         except KeyError:
             return None
 
     def end_order(self, room_id):
-        try:
-            name = self.rooms[room_id].name
-            return Response.text(Response.REP_END_ORDERLIST, name)
-        except KeyError:
-            return None
+        self.order_db.del_room_order(room_id)
+        return Response.text(Response.REP_END_ORDERLIST)
 
+    @staticmethod
+    def __order_print_user_item_amount(order):
+        return "%s: %s %s" % (order.user_name, order.item_name, order.amount)
 
+""" deprecated code use for reference
 class Order:
     def __init__(self, name):
         self.name = name
@@ -82,3 +84,4 @@ class Order:
 
     def __str__(self):
         return self.order_by_user_string()
+"""

@@ -6,9 +6,10 @@ class Response:
     REP_NEW_ORDERLIST_CREATED = 0
     REP_DUP_ORDERLIST = 1
     REP_SUMMARY_ORDERLIST = 2
-    REP_END_ORDERLIST = 3
-    REP_ORDERLIST_CLOSED = 4
-    REP_ORDER_PRINT = 5
+    REP_CLOSE_ORDERLIST = 3
+    REP_END_ORDERLIST = 4
+    REP_ORDERLIST_CLOSED = 5
+    REP_ORDER_PRINT = 6
 
     LANGUAGE = LANG_EN
 
@@ -22,13 +23,15 @@ class Response:
             if code == Response.REP_NOT_IMPLEMENT: return "Sorry, this feature is under construction"
             # order_name
             if code == Response.REP_NEW_ORDERLIST_CREATED: return "New Order '%s' created" % args
-            # not require
+            # -
             if code == Response.REP_DUP_ORDERLIST: return "This room already has order\nPlease end the previous order first"
-            # order_name, list_by_menu
-            if code == Response.REP_SUMMARY_ORDERLIST: return "===== Order Summary '%s' =====\n%s\n----------------%s" % args
-            # order_name
-            if code == Response.REP_END_ORDERLIST: return "Order '%s' ended" % args
-            # order_name
-            if code == Response.REP_ORDERLIST_CLOSED: return "Order '%s' is already closed" % args
+            # order_list
+            if code == Response.REP_SUMMARY_ORDERLIST: return "===== Order Summary =====\n%s" % args
+            # -
+            if code == Response.REP_CLOSE_ORDERLIST: return "Order closed"
+            # -
+            if code == Response.REP_END_ORDERLIST: return "Order ended"
+            # -
+            if code == Response.REP_ORDERLIST_CLOSED: return "Order is already closed"
             # order_name, order_text
             if code == Response.REP_ORDER_PRINT: return "====== Order '%s' ======\n%s" % args
