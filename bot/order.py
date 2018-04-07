@@ -11,29 +11,47 @@ class RoomOrder:
             self.rooms_enable[room_id] = True
             return Response.text(Response.REP_NEW_ORDERLIST_CREATED, order_name)
         else:
+            # room order is already created yet.
             return Response.text(Response.REP_DUP_ORDERLIST)
 
     def list_all(self):
         pass
 
     def list_order(self, room_id):
-        text = ""
-        order_list = self.order_db.get_room_order(room_id)
-        for order in order_list:
-            text += __order_print_user_item_amount(order) + "\n"
-        text = text[:-1]
-        return Response.text(Response.REP_SUMMARY_ORDERLIST, text)
+        if room_id in self.rooms_enable:
+            # room order exists.
+            text = ""
+            order_list = self.order_db.get_room_order(room_id)
+            for order in order_list:
+                text += self.__order_print_user_item_amount(order) + "\n"
+            text = text[:-1]
+            return Response.text(Response.REP_SUMMARY_ORDERLIST, text)
+        else:
+            # room order is not created yet.
+            return None
 
     def close_order(self, room_id):
         try:
             self.rooms_enable[room_id] = False
             return Response.text(Response.REP_ORDERLIST_CLOSED)
         except KeyError:
+            print("Error: room order %s does not exist" % (room_id))
+            return None
+        except Exception as e:
+            print(e)
             return None
 
     def end_order(self, room_id):
-        self.order_db.del_room_order(room_id)
-        return Response.text(Response.REP_END_ORDERLIST)
+        try:
+            del self.rooms_enable[room_id]
+            self.order_db.del_room_order(room_id)
+            return Response.text(Response.REP_END_ORDERLIST)
+        except KeyError:
+            print("Error: room order %s does not exist" % (room_id))
+            return None
+        except Exception as e:
+            print(e)
+            return None
 
     @staticmethod
     def __order_print_user_item_amount(order):
