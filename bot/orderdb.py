@@ -40,7 +40,10 @@ class OrderRow:
     def from_db_rows(cls, rows):
         orders = []
         for row in rows:
-            orders.append(cls(room_id=row[0], user_name=row[1], item_name=row[2], amount=row[3]))
+            try:
+                orders.append(cls(room_id=row[0], user_name=row[1], item_name=row[2], amount=row[3]))
+            except Exception:
+                raise
         return orders
 
 
@@ -64,15 +67,13 @@ class OrderDB:
         Update the order instead if one exists.
         """
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SET_ORDER, [
-                       room_id, user_name, item_name, amount])
+        cursor.execute(OrderQuery.SET_ORDER, [room_id, user_name, item_name, amount])
         self.db.commit()
 
     def del_order(self, room_id, user_name, item_name):
         "Delete an order from the table by user_name and item_name"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [
-                       room_id, user_name, item_name])
+        cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_name, item_name])
         self.db.commit()
 
     def del_room_order(self, room_id):
