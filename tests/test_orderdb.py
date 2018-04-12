@@ -23,6 +23,9 @@ MOCK_ROWS = [
     ['10001', 'finn', 'steak', 1]
 ]
 
+MOCK_INVALID_ROWS = [
+    ['10001', 'finn', 'milk']
+]
 
 def test_orderrow_init():
     room_id = "10001"
@@ -37,7 +40,7 @@ def test_orderrow_init():
     assert order_row.amount == amount
 
 
-def test_orderrow_from_db_rows():
+def test_orderrow_from_db_rows_success():
     order_rows = OrderRow.from_db_rows(MOCK_ROWS)
     assert len(order_rows) == len(MOCK_ROWS)
     for idx, order_row in enumerate(order_rows):
@@ -45,6 +48,11 @@ def test_orderrow_from_db_rows():
         assert order_row.user_name == MOCK_ROWS[idx][1]
         assert order_row.item_name == MOCK_ROWS[idx][2]
         assert order_row.amount == MOCK_ROWS[idx][3]
+
+def test_orderrow_from_db_rows_fail():
+    with pytest.raises(Exception):
+        # some Exception should be raise
+        _ = OrderRow.from_db_rows(MOCK_INVALID_ROWS)
 
 ###########################
 # OrderDB test cases
