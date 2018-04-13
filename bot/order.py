@@ -41,6 +41,12 @@ class RoomOrder:
             print(e)
             return None
 
+    def is_order_opened(self, room_id):
+        try:
+            return self.rooms_enable[room_id]
+        except KeyError:
+            return False
+
     def end_order(self, room_id):
         try:
             del self.rooms_enable[room_id]
