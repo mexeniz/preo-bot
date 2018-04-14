@@ -10,6 +10,9 @@ from linebot.models import (
 from orderdb import (
     OrderDB
 )
+from order import (
+    RoomOrder
+)
 import re
 
 
@@ -19,16 +22,18 @@ class BotCMD():
     NEW_ORDER = 1
     ADD_ORDER = 2
     DEL_ORDER = 3
-    END_ORDER = 4
-    LIST_ORDER = 5
-    HELP = 6
+    LIST_ORDER = 4
+    CLOSE_ORDER = 5
+    END_ORDER = 6
+    HELP = 7
 
     CMD_DICT = {
         "new": NEW_ORDER,
         "add": ADD_ORDER,
         "del": DEL_ORDER,
-        "end": END_ORDER,
         "list": LIST_ORDER,
+        "close": CLOSE_ORDER,
+        "end": END_ORDER,
         "help": HELP
     }
 
@@ -83,17 +88,19 @@ class Agent():
     HELP_MESSAGE = "\n".join(["Help message", "!new <order_name>", "!add <user_name> <item> <amount>",
                               "!del <user_name> <item> <amount>", "!end", "!list", "!help"])
 
-    def __init__(self):
-        # Map room_id with order property
-        self.room_dict = {}
-        self.order_db = OrderDB()
+    def __init__(self, **kwargs):
+        if 'db_path' in kwargs:
+            self.room_orders = RoomOrder(kwargs['db_path'])
+        else:
+            # use default config
+            self.room_orders = RoomOrder()
 
     def __handle_new_order(self, **kwargs):
         """
         Create new order list.
         Store order list properties such as name in room_dict using room_id as a key.
         """
-        return "new order list\nroom_id=%s name=%s" % (kwargs['room_id'], kwargs['name'])
+        return self.room_orders.new_order(kwargs['room_id'], kwargs['name'])
 
     def __handle_add_order(self, **kwargs):
         """
@@ -109,20 +116,27 @@ class Agent():
         return "del order\nroom_id=%s user=%s order=%s" % (kwargs['room_id'],
                                                            kwargs['user_name'], kwargs['item'])
 
-    def __handle_end_order(self, **kwargs):
-        """
-        Close the list of orders by room_id and remove room_id key from room_dict.
-        Any orders from this room will be deleted from database.
-        Error message will be return if an order list is not created yet.
-        """
-        return "end order list\nroom_id=%s" % (kwargs['room_id'])
-
     def __handle_list_order(self, **kwargs):
         """
         Show the list of orders by room_id.
         Error message will be return if an order list is not created yet.
         """
-        return "show order list\nroom_id=%s" % (kwargs['room_id'])
+        return self.room_orders.list_order(kwargs['room_id'])
+
+    def __handle_close_order(self, **kwargs):
+        """
+        Close the list of orders by room_id. After that, user can only list the order.
+        Error message will be return if an order list is not created yet.
+        """
+        return self.room_orders.close_order(kwargs['room_id'])
+
+    def __handle_end_order(self, **kwargs):
+        """
+        Remove the list of orders by room_id and remove room_id key from room_dict.
+        Any orders from this room will be deleted from database.
+        Error message will be return if an order list is not created yet.
+        """
+        return self.room_orders.end_order(kwargs['room_id'])
 
     def __handle_help(self, **kwargs):
         """
@@ -163,10 +177,13 @@ class Agent():
             elif cmd == BotCMD.DEL_ORDER:
                 response = self.__handle_del_order(room_id=room_id,
                                                    user_name=group_text['user_name'], item=group_text['item'])
-            elif cmd == BotCMD.END_ORDER:
-                response = self.__handle_end_order(room_id=room_id)
             elif cmd == BotCMD.LIST_ORDER:
                 response = self.__handle_list_order(room_id=room_id)
+            elif cmd == BotCMD.CLOSE_ORDER:
+                response = self.__handle_close_order(room_id=room_id)
+            elif cmd == BotCMD.END_ORDER:
+                response = self.__handle_end_order(room_id=room_id)
+
             elif cmd == BotCMD.HELP:
                 response = self.__handle_help()
             return response

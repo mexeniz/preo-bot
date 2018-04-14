@@ -9,13 +9,53 @@ parentdir = os.path.dirname(currentdir)
 # Include paths for module search
 sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from orderdb import (
-    OrderDB
+    OrderDB, OrderRow
 )
 
 TEST_DB_PATH = "/tmp/test-preo-bot.db"
 
 ###########################
-# Order test cases
+# OrderRow test cases
+###########################
+
+MOCK_ROWS = [
+    ['10001', 'finn', 'milk', 1],
+    ['10001', 'finn', 'steak', 1]
+]
+
+MOCK_INVALID_ROWS = [
+    ['10001', 'finn', 'milk']
+]
+
+def test_orderrow_init():
+    room_id = "10001"
+    user_name = "yoda"
+    item_name = "fishburger"
+    amount = 1
+    order_row = OrderRow(room_id=room_id, user_name=user_name,
+                         item_name=item_name, amount=amount)
+    assert order_row.room_id == room_id
+    assert order_row.user_name == user_name
+    assert order_row.item_name == item_name
+    assert order_row.amount == amount
+
+
+def test_orderrow_from_db_rows_success():
+    order_rows = OrderRow.from_db_rows(MOCK_ROWS)
+    assert len(order_rows) == len(MOCK_ROWS)
+    for idx, order_row in enumerate(order_rows):
+        assert order_row.room_id == MOCK_ROWS[idx][0]
+        assert order_row.user_name == MOCK_ROWS[idx][1]
+        assert order_row.item_name == MOCK_ROWS[idx][2]
+        assert order_row.amount == MOCK_ROWS[idx][3]
+
+def test_orderrow_from_db_rows_fail():
+    with pytest.raises(Exception):
+        # some Exception should be raise
+        _ = OrderRow.from_db_rows(MOCK_INVALID_ROWS)
+
+###########################
+# OrderDB test cases
 ###########################
 
 
@@ -42,97 +82,104 @@ INVALID_MOCK_ORDERS = [
     ['10002', 'krennic', 'tea', -1]
 ]
 
+
 def clean_db():
     if os.path.exists(TEST_DB_PATH):
-        print("Remove DB at %s" % (TEST_DB_PATH))
+        # clean old test database before init new OrderDB
         os.remove(TEST_DB_PATH)
 
 
-def insert_mock_data(order):
+def insert_mock_data(order_db):
     for data in MOCK_ORDERS:
-        order.set_order(data[0], data[1], data[2], data[3])
+        order_db.set_order(data[0], data[1], data[2], data[3])
 
-def count_item_amount(rows, item_name):
+
+def count_item_amount(orders, item_name):
     amount = 0
-    for row in rows:
-        if row[2] == item_name:
-            amount = amount + row[3]
+    for order in orders:
+        if order.item_name == item_name:
+            amount = amount + order.amount
     return amount
 
 
 def test_orderdb_init():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    assert order != None
-    assert isinstance(order, OrderDB)
+    order_db = OrderDB(TEST_DB_PATH)
+    assert order_db != None
+    assert isinstance(order_db, OrderDB)
 
 
 def test_orderdb_set_order_success():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
+    order_db = OrderDB(TEST_DB_PATH)
     for data in MOCK_ORDERS:
-        order.set_order(data[0], data[1], data[2], data[3])
-    rows = order.list_all()
-    assert len(rows) == len(MOCK_ORDERS)
+        order_db.set_order(data[0], data[1], data[2], data[3])
+    orders = order_db.list_all()
+    assert len(orders) == len(MOCK_ORDERS)
+
 
 def test_orderdb_set_order_fail():
     # Test orders table constraint
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
+    order_db = OrderDB(TEST_DB_PATH)
     for data in INVALID_MOCK_ORDERS:
         with pytest.raises(sqlite3.IntegrityError):
-            order.set_order(data[0], data[1], data[2], data[3])
-    rows = order.list_all()
-    assert len(rows) == 0
+            order_db.set_order(data[0], data[1], data[2], data[3])
+    orders = order_db.list_all()
+    assert len(orders) == 0
 
 
 def test_orderdb_del_order():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    insert_mock_data(order)
+    order_db = OrderDB(TEST_DB_PATH)
+    insert_mock_data(order_db)
     for data in MOCK_ORDERS:
-        order.del_order(data[0], data[1], data[2])
-    rows = order.list_all()
-    assert len(rows) == 0
+        order_db.del_order(data[0], data[1], data[2])
+    orders = order_db.list_all()
+    assert len(orders) == 0
+
 
 def test_orderdb_del_room_order():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    insert_mock_data(order)
-    order.del_room_order('10001')
-    rows = order.get_room_order('10001')
-    assert len(rows) == 0
-    order.del_room_order('10002')
-    rows = order.get_room_order('10002')
-    assert len(rows) == 0
+    order_db = OrderDB(TEST_DB_PATH)
+    insert_mock_data(order_db)
+    order_db.del_room_order('10001')
+    orders = order_db.get_room_order('10001')
+    assert len(orders) == 0
+    order_db.del_room_order('10002')
+    orders = order_db.get_room_order('10002')
+    assert len(orders) == 0
+
 
 def test_orderdb_get_room_order():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    insert_mock_data(order)
-    rows = order.get_room_order('10000')
-    assert len(rows) == 0
-    rows = order.get_room_order('10001')
-    assert len(rows) == 6
+    order_db = OrderDB(TEST_DB_PATH)
+    insert_mock_data(order_db)
+    orders = order_db.get_room_order('10000')
+    assert len(orders) == 0
+    orders = order_db.get_room_order('10001')
+    assert len(orders) == 6
+
 
 def test_orderdb_get_user_order():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    insert_mock_data(order)
-    rows = order.get_user_order('10001', 'noone')
-    assert len(rows) == 0
-    rows = order.get_user_order('10001', 'finn')
-    assert len(rows) == 2
-    rows = order.get_user_order('10001', 'rey')
-    assert len(rows) == 2
+    order_db = OrderDB(TEST_DB_PATH)
+    insert_mock_data(order_db)
+    orders = order_db.get_user_order('10001', 'noone')
+    assert len(orders) == 0
+    orders = order_db.get_user_order('10001', 'finn')
+    assert len(orders) == 2
+    orders = order_db.get_user_order('10001', 'rey')
+    assert len(orders) == 2
+
 
 def test_orderdb_get_item_order():
     clean_db()
-    order = OrderDB(TEST_DB_PATH)
-    insert_mock_data(order)
-    rows = order.get_item_order('10001', 'rice')
-    assert count_item_amount(rows, 'rice') == 0
-    rows = order.get_item_order('10001', 'milk')
-    assert count_item_amount(rows, 'milk') == 5
-    rows = order.get_item_order('10001', 'bread')
-    assert count_item_amount(rows, 'bread') == 2
+    order_db = OrderDB(TEST_DB_PATH)
+    insert_mock_data(order_db)
+    orders = order_db.get_item_order('10001', 'rice')
+    assert count_item_amount(orders, 'rice') == 0
+    orders = order_db.get_item_order('10001', 'milk')
+    assert count_item_amount(orders, 'milk') == 5
+    orders = order_db.get_item_order('10001', 'bread')
+    assert count_item_amount(orders, 'bread') == 2
