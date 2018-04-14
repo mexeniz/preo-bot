@@ -10,6 +10,7 @@ class Response:
     REP_END_ORDERLIST = 4
     REP_ORDERLIST_CLOSED = 5
     REP_ORDER_PRINT = 6
+    REP_ORDERLIST_ALREADY_CLOSED = 7
 
     LANGUAGE = LANG_EN
 
@@ -32,6 +33,8 @@ class Response:
             # -
             if code == Response.REP_END_ORDERLIST: return "Order ended"
             # -
-            if code == Response.REP_ORDERLIST_CLOSED: return "Order is already closed"
+            if code == Response.REP_ORDERLIST_CLOSED: return "Order is closed"
+            # -
+            if code == Response.REP_ORDERLIST_ALREADY_CLOSED: return "Order has been already closed"
             # order_name, order_text
             if code == Response.REP_ORDER_PRINT: return "====== Order '%s' ======\n%s" % args

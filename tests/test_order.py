@@ -59,11 +59,15 @@ def test_roomorder_list_order():
     reply = room_order.list_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
 
-def test_roomorder_close_order():
+def test_roomorder_close_order_success():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    room_order.close_order(TEST_ROOM_1)
+    assert None != room_order.close_order(TEST_ROOM_1)
     assert False == room_order.is_order_opened(TEST_ROOM_1)
+
+def test_roomorder_close_order_fail():
+    room_order = create_mock_roomorder()
+    assert None == room_order.close_order(TEST_ROOM_1)
 
 def test_roomorder_end_order():
     room_order = create_mock_roomorder()
