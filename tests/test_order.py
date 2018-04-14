@@ -62,8 +62,10 @@ def test_roomorder_list_order():
 def test_roomorder_close_order_success():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    assert None != room_order.close_order(TEST_ROOM_1)
+    assert Response.text(Response.REP_ORDERLIST_CLOSED) == room_order.close_order(TEST_ROOM_1)
     assert False == room_order.is_order_opened(TEST_ROOM_1)
+    # try to close again
+    assert Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED) == room_order.close_order(TEST_ROOM_1)
 
 def test_roomorder_close_order_fail():
     room_order = create_mock_roomorder()
