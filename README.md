@@ -2,7 +2,7 @@
 
 Preo Bot is a preorder helper bot for Line platform.
 
-Version 0.0.1
+Version 0.0.2
 
 ### Development
 
