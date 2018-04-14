@@ -65,6 +65,7 @@ class GroupParser():
 
     @classmethod
     def parse_text_group(cls, text):
+        text = text.strip()
         result = {}
         i = -1
         for order_regex in GroupParser.order_regexes:

@@ -61,6 +61,10 @@ def test_bot_group_parser():
         "!a b c") == {"cmd": "a", "user_name": "b", "item": "c"}
     assert GroupParser.parse_text_group("!a b") == {"cmd": "a", "name": "b"}
     assert GroupParser.parse_text_group("!a 5") == {"cmd": "a", "name": "5"}
+    # Space at beginning or ending shoud not affect
+    assert GroupParser.parse_text_group(" !a ") == {"cmd": "a"}
+    assert GroupParser.parse_text_group("!a b ") == {"cmd": "a", "name": "b"}
+    assert GroupParser.parse_text_group(" !a b") == {"cmd": "a", "name": "b"}
     # Not match regex, return None
     assert GroupParser.parse_text_group("!a b c -1") == None
     assert GroupParser.parse_text_group("a b 5") == None
