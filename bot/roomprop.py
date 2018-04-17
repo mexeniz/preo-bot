@@ -1,16 +1,15 @@
-# @Description : Structures for keeping orders from users.
+# @Description : Structures for keeping room property from users.
 
-class OrderQuery:
-    "SQL Queries for Order class"
+class RoomPropQuery:
+    "SQL Queries for RoomProp class"
     INIT_SCHEMA = """
-            CREATE TABLE IF NOT EXISTS orders (
+            CREATE TABLE IF NOT EXISTS room_props (
             room_id  CHAR(128) NOT NULL,
-			user_name CHAR(128) NOT NULL,
-			item_name VARCHAR(255) NOT NULL,
-			amount INT NOT NULL CHECK(amount > 0),
-			CONSTRAINT PK_Order PRIMARY KEY (room_id, user_name, item_name));
+			order_name CHAR(128) NOT NULL,
+			enable INT NOT NULL NOT NULL,
+			CONSTRAINT PK_RoomProp PRIMARY KEY (room_id);
             """
-
+    # TODO(M): Fix CRUD query
     SET_ORDER = """
         INSERT OR REPLACE INTO orders (room_id, user_name, item_name, amount)
         VALUES (?,?,?,?)"""
@@ -24,21 +23,20 @@ class OrderQuery:
     SELECT_ORDER_BY_ITEM = "SELECT room_id, user_name, item_name, amount FROM orders WHERE room_id = ? and item_name = ?"
 
 
-class OrderRow:
-    "An instance for storing order row"
+class RoomPropRow:
+    "An instance for storing room property row"
 
     def __init__(self, **kwargs):
         self.room_id = kwargs['room_id']
-        self.user_name = kwargs['user_name']
-        self.item_name = kwargs['item_name']
-        self.amount = kwargs['amount']
+        self.order_name = kwargs['order_name']
+        self.enable = kwargs['enable']
 
     @classmethod
     def from_db_rows(cls, rows):
-        orders = []
+        room_props = []
         for row in rows:
             try:
-                orders.append(cls(room_id=row[0], user_name=row[1], item_name=row[2], amount=row[3]))
+                room_props.append(cls(room_id=row[0], order_name=row[1], enable=row[2]))
             except Exception:
                 raise
-        return orders
+        return room_props

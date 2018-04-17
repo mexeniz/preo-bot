@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from agent import (
     Agent, BotCMD, GroupParser
 )
-from order import (
+from roomorder import (
     RoomOrder
 )
 from linebot.models import (

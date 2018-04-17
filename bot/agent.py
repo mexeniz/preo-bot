@@ -7,10 +7,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-from orderdb import (
-    OrderDB
-)
-from order import (
+from roomorder import (
     RoomOrder
 )
 import re
