@@ -104,8 +104,8 @@ class Agent():
         """
         Add an order from user into database with room_id, user_name, item and amount.
         """
-        return "add order\nroom_id=%s user=%s order=%s amount=%d" % (kwargs['room_id'],
-                                                                     kwargs['user_name'], kwargs['item'], kwargs['amount'])
+        return self.room_orders.add_item(kwargs['room_id'], kwargs['user_name'], kwargs['item'], kwargs['amount'])
+
 
     def __handle_del_order(self, **kwargs):
         """

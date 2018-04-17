@@ -16,6 +16,17 @@ class RoomOrder:
             res = Response.text(Response.REP_DUP_ORDERLIST)
         return res
 
+    def add_item(self, room_id, user_name, item_name, amount):
+        res = None
+        if room_id in self.rooms_enable:
+            # room order exists.
+            item_list = self.preo_db.set_order(room_id, user_name, item_name, amount)
+            res = Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
+        else:
+            # room order is not created yet.
+            print("Error: room order %s does not exist" % (room_id))
+        return res
+
     def list_all(self):
         pass
 
