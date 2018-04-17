@@ -21,10 +21,19 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 TEST_ROOM_1 = "room1"
 TEST_ORDER_1 = "order1"
 TEST_ORDER_2 = "order2"
+TEST_USER_NAME_1 = "user1"
+TEST_USER_NAME_2 = "user2"
+TEST_ITEM_1 = "food1"
+TEST_ITEM_2 = "food2"
+TEST_AMOUNT_1 = 1
+TEST_AMOUNT_2 = 2
 
 ###########################
 # RoomOrder test cases
 ###########################
+
+def _mock_print_user_item_amount(user_name, item_name, amount):
+    return "%s: %s %s" % (user_name, item_name, amount)
 
 def create_mock_roomorder():
     if os.path.exists(TEST_DB_PATH):
@@ -46,6 +55,14 @@ def test_roomorder_new_order():
     assert reply == Response.text(Response.REP_NEW_ORDERLIST_CREATED, TEST_ORDER_1)
     assert True == room_order.is_order_opened(TEST_ROOM_1)
 
+def test_roomorder_add_item():
+    room_order = create_mock_roomorder()
+    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+
 def test_roomorder_multiple_new_order():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
@@ -58,6 +75,22 @@ def test_roomorder_list_order():
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
     reply = room_order.list_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
+
+def test_roomorder_update_item():
+    room_order = create_mock_roomorder()
+    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
+    # Add item for first time
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    reply = room_order.list_order(TEST_ROOM_1)
+    text = _mock_print_user_item_amount(TEST_USER_NAME_1, TEST_ITEM_1, str(TEST_AMOUNT_1))
+    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, text)
+    # Update existing item
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
+    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
+    reply = room_order.list_order(TEST_ROOM_1)
+    text = _mock_print_user_item_amount(TEST_USER_NAME_1, TEST_ITEM_1, str(TEST_AMOUNT_2))
+    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, text)
 
 def test_roomorder_close_order_success():
     room_order = create_mock_roomorder()
