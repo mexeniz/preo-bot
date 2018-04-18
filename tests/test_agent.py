@@ -182,6 +182,8 @@ def test_agent_handle_new_order():
 
 def test_agent_handle_add_order():
     agent = create_mock_agent()
+    agent._Agent__handle_new_order(
+        room_id=TEST_ROOM_1, name=TEST_ORDER_1)
     assert agent._Agent__handle_add_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1, amount=1) != None
 

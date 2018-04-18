@@ -11,6 +11,7 @@ class Response:
     REP_ORDERLIST_CLOSED = 5
     REP_ORDER_PRINT = 6
     REP_ORDERLIST_ALREADY_CLOSED = 7
+    REP_ADD_ITEM = 8
 
     LANGUAGE = LANG_EN
 
@@ -38,3 +39,5 @@ class Response:
             if code == Response.REP_ORDERLIST_ALREADY_CLOSED: return "Order has been already closed"
             # order_name, order_text
             if code == Response.REP_ORDER_PRINT: return "====== Order '%s' ======\n%s" % args
+            # order_name, order_text
+            if code == Response.REP_ADD_ITEM: return "Update: %s has ordered %d %s." % (args[0], args[2], args[1])
