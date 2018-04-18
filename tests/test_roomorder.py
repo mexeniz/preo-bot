@@ -76,6 +76,18 @@ def test_roomorder_list_order():
     reply = room_order.list_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
 
+def test_roomorder_add_item_after_closing_order():
+    room_order = create_mock_roomorder()
+    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    # Close order
+    assert Response.text(Response.REP_ORDERLIST_CLOSED) == room_order.close_order(TEST_ROOM_1)
+    assert False == room_order.is_order_opened(TEST_ROOM_1)
+    # Try to add new item
+    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    assert reply == Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
+
 def test_roomorder_update_item():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)

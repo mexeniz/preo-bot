@@ -20,8 +20,14 @@ class RoomOrder:
         res = None
         if room_id in self.rooms_enable:
             # room order exists.
-            item_list = self.preo_db.set_order(room_id, user_name, item_name, amount)
-            res = Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
+            if self.rooms_enable[room_id] == True:
+                # room order is enabled.
+                item_list = self.preo_db.set_order(room_id, user_name, item_name, amount)
+                res = Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
+            else:
+                # room order is not enabled.
+                print("Error: room order %s is not enable" % (room_id))
+                res = Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
         else:
             # room order is not created yet.
             print("Error: room order %s does not exist" % (room_id))
