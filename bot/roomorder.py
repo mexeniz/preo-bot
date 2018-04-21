@@ -25,11 +25,8 @@ class RoomOrder:
             print("Error: room order %s is not enable" % (room_id))
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
 
-        item_list = self.preo_db.set_order(room_id, user_name, item_name, amount)
+        self.preo_db.set_order(room_id, user_name, item_name, amount)
         return Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
-
-    def list_all(self):
-        pass
 
     def list_order(self, room_id):
         if room_id not in self.rooms_enable:
