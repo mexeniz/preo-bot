@@ -6,13 +6,13 @@ class RoomOrder:
         self.rooms_enable = {}
         self.preo_db = PreoDB(db_path)
 
-    def new_order(self, room_id, order_name):
+    def new_order(self, room_id, list_name):
         if room_id in self.rooms_enable:
             # Room order has already been created.
             return Response.text(Response.REP_DUP_ORDERLIST)
 
         self.rooms_enable[room_id] = True
-        return Response.text(Response.REP_NEW_ORDERLIST_CREATED, order_name)
+        return Response.text(Response.REP_NEW_ORDERLIST_CREATED, list_name)
 
     def add_item(self, room_id, user_name, item_name, amount):
         if room_id not in self.rooms_enable:
