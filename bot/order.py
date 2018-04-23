@@ -22,6 +22,7 @@ class OrderQuery:
     SELECT_ORDER_BY_ROOM = "SELECT room_id, user_name, item_name, amount FROM orders WHERE room_id = ?"
     SELECT_ORDER_BY_USER = "SELECT room_id, user_name, item_name, amount FROM orders WHERE room_id = ? and user_name = ?"
     SELECT_ORDER_BY_ITEM = "SELECT room_id, user_name, item_name, amount FROM orders WHERE room_id = ? and item_name = ?"
+    SELECT_ORDER_BY_USER_AND_ITEM = "SELECT room_id, user_name, item_name, amount FROM orders WHERE room_id = ? and user_name = ? and item_name = ?"
 
 
 class OrderRow:

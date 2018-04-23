@@ -21,8 +21,9 @@ class BotCMD():
     DEL_ORDER = 3
     LIST_ORDER = 4
     CLOSE_ORDER = 5
-    END_ORDER = 6
-    HELP = 7
+    OPEN_ORDER = 6
+    END_ORDER = 7
+    HELP = 8
 
     CMD_DICT = {
         "new": NEW_ORDER,
@@ -30,6 +31,7 @@ class BotCMD():
         "del": DEL_ORDER,
         "list": LIST_ORDER,
         "close": CLOSE_ORDER,
+        "open": OPEN_ORDER,
         "end": END_ORDER,
         "help": HELP
     }
@@ -111,8 +113,7 @@ class Agent():
         """
         Delete an order from database by room_id, user_name and item.
         """
-        return "del order\nroom_id=%s user=%s order=%s" % (kwargs['room_id'],
-                                                           kwargs['user_name'], kwargs['item'])
+        return self.room_orders.delete_item(kwargs['room_id'], kwargs['user_name'], kwargs['item'])
 
     def __handle_list_order(self, **kwargs):
         """
@@ -127,6 +128,13 @@ class Agent():
         Error message will be return if an order list is not created yet.
         """
         return self.room_orders.close_order(kwargs['room_id'])
+
+    def __handle_open_order(self, **kwargs):
+        """
+        Open the closed list of orders by room_id. After that, user can edit the order.
+        Error message will be return if an order list is not created yet.
+        """
+        return self.room_orders.open_order(kwargs['room_id'])
 
     def __handle_end_order(self, **kwargs):
         """
@@ -179,6 +187,8 @@ class Agent():
                 response = self.__handle_list_order(room_id=room_id)
             elif cmd == BotCMD.CLOSE_ORDER:
                 response = self.__handle_close_order(room_id=room_id)
+            elif cmd == BotCMD.OPEN_ORDER:
+                response = self.__handle_open_order(room_id=room_id)
             elif cmd == BotCMD.END_ORDER:
                 response = self.__handle_end_order(room_id=room_id)
 

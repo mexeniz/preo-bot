@@ -12,6 +12,10 @@ class Response:
     REP_ORDER_PRINT = 6
     REP_ORDERLIST_ALREADY_CLOSED = 7
     REP_ADD_ITEM = 8
+    REP_DEL_ITEM = 9
+    REP_DEL_NOT_EXIST_ITEM = 10
+    REP_OPEN_ORDERLIST = 11
+    REP_ORDERLIST_ALREADY_OPENED = 12
 
     LANGUAGE = LANG_EN
 
@@ -39,5 +43,13 @@ class Response:
             if code == Response.REP_ORDERLIST_ALREADY_CLOSED: return "Order has been already closed"
             # list_name, order_text
             if code == Response.REP_ORDER_PRINT: return "====== Order '%s' ======\n%s" % args
-            # list_name, order_text
-            if code == Response.REP_ADD_ITEM: return "Update: %s has ordered %d %s." % (args[0], args[2], args[1])
+            # user_name, order_text
+            if code == Response.REP_ADD_ITEM: return "Update: %s has ordered %d %s" % (args[0], args[2], args[1])
+            # user_name, order_text
+            if code == Response.REP_DEL_ITEM: return "Update: %s has deleted %s order" % (args[0], args[1])
+            # list_name, user_name , order_text
+            if code == Response.REP_DEL_NOT_EXIST_ITEM: return "%s for %s is not exist in %s" % (args[2], args[1], args[0])
+            # -
+            if code == Response.REP_OPEN_ORDERLIST: return "Order is opened"
+            # -
+            if code == Response.REP_ORDERLIST_ALREADY_OPENED: return "Order has been already opened"

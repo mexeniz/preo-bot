@@ -67,3 +67,10 @@ class PreoDB:
         cursor.execute(OrderQuery.SELECT_ORDER_BY_ITEM, [room_id, item_name])
         rows = cursor.fetchall()
         return OrderRow.from_db_rows(rows)
+
+    def get_user_item_order(self, room_id, user_name, item_name):
+        "List orders by room_id , user_name and item_name"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER_AND_ITEM, [room_id, user_name, item_name])
+        rows = cursor.fetchall()
+        return OrderRow.from_db_rows(rows)

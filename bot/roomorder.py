@@ -28,6 +28,23 @@ class RoomOrder:
         self.preo_db.set_order(room_id, user_name, item_name, amount)
         return Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
 
+    def delete_item(self, room_id, user_name, item_name):
+        if room_id not in self.rooms_enable:
+            # Room order has not been created yet.
+            print("Error: room order %s does not exist" % (room_id))
+            return None
+        if self.rooms_enable[room_id] == False:
+            # Room order is not enabled.
+            print("Error: room order %s is not enable" % (room_id))
+            return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
+        if not self.preo_db.get_user_item_order(room_id, user_name, item_name):
+            # Iten is not exist.
+            print("Error: item %s for %s is not exist in %s" % (item_name, user_name, room_id))
+            return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, room_id, user_name, item_name)
+
+        self.preo_db.del_order(room_id, user_name, item_name)
+        return Response.text(Response.REP_DEL_ITEM, user_name, item_name)
+
     def list_order(self, room_id):
         if room_id not in self.rooms_enable:
             # Room order has not been created yet.
@@ -53,6 +70,19 @@ class RoomOrder:
 
         self.rooms_enable[room_id] = False
         return Response.text(Response.REP_ORDERLIST_CLOSED)
+
+    def open_order(self, room_id):
+        if room_id not in self.rooms_enable:
+            # Room order has not been created yet.
+            print("Error: room order %s does not exist" % (room_id))
+            return None
+
+        if self.rooms_enable[room_id] == True:
+            # Room order has already been closed.
+            return Response.text(Response.REP_ORDERLIST_ALREADY_OPENED)
+
+        self.rooms_enable[room_id] = True
+        return Response.text(Response.REP_OPEN_ORDERLIST)
 
     def is_order_opened(self, room_id):
         if room_id not in self.rooms_enable:
