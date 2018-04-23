@@ -21,8 +21,9 @@ class BotCMD():
     DEL_ORDER = 3
     LIST_ORDER = 4
     CLOSE_ORDER = 5
-    END_ORDER = 6
-    HELP = 7
+    OPEN_ORDER = 6
+    END_ORDER = 7
+    HELP = 8
 
     CMD_DICT = {
         "new": NEW_ORDER,
@@ -30,6 +31,7 @@ class BotCMD():
         "del": DEL_ORDER,
         "list": LIST_ORDER,
         "close": CLOSE_ORDER,
+        "open": OPEN_ORDER,
         "end": END_ORDER,
         "help": HELP
     }
@@ -185,6 +187,8 @@ class Agent():
                 response = self.__handle_list_order(room_id=room_id)
             elif cmd == BotCMD.CLOSE_ORDER:
                 response = self.__handle_close_order(room_id=room_id)
+            elif cmd == BotCMD.OPEN_ORDER:
+                response = self.__handle_open_order(room_id=room_id)
             elif cmd == BotCMD.END_ORDER:
                 response = self.__handle_end_order(room_id=room_id)
 
