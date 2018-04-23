@@ -14,7 +14,7 @@ class Response:
     REP_ADD_ITEM = 8
     REP_DEL_ITEM = 9
     REP_DEL_NOT_EXIST_ITEM = 10
-    REP_ORDERLIST_OPENED = 11
+    REP_OPEN_ORDERLIST = 11
     REP_ORDERLIST_ALREADY_OPENED = 12
 
     LANGUAGE = LANG_EN
@@ -50,6 +50,6 @@ class Response:
             # list_name, user_name , order_text
             if code == Response.REP_DEL_NOT_EXIST_ITEM: return "%s for %s is not exist in %s" % (args[2], args[1], args[0])
             # -
-            if code == REP_OPEN_ORDERLIST: return "Order is opened"
+            if code == Response.REP_OPEN_ORDERLIST: return "Order is opened"
             # -
-            if code == REP_ORDERLIST_ALREADY_OPENED: return "Order has been already opened"
+            if code == Response.REP_ORDERLIST_ALREADY_OPENED: return "Order has been already opened"

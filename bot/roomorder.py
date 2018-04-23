@@ -82,7 +82,7 @@ class RoomOrder:
             return Response.text(Response.REP_ORDERLIST_ALREADY_OPENED)
 
         self.rooms_enable[room_id] = True
-        return Response.text(Response.REP_ORDERLIST_OPENED)
+        return Response.text(Response.REP_OPEN_ORDERLIST)
 
     def is_order_opened(self, room_id):
         if room_id not in self.rooms_enable:
