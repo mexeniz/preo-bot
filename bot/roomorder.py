@@ -10,7 +10,7 @@ class RoomOrder:
             # Room order has already been created.
             return Response.text(Response.REP_DUP_ORDERLIST)
 
-        self.preo_db.new_room_order(room_id)
+        self.preo_db.new_room_order(room_id, list_name)
         return Response.text(Response.REP_NEW_ORDERLIST_CREATED, list_name)
 
     def add_item(self, room_id, user_name, item_name, amount):

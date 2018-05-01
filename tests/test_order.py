@@ -9,7 +9,9 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from order import (
     OrderRow,
-    RoomStatus
+)
+from roomprop import (
+    RoomPropRow,
 )
 
 ###########################
@@ -51,19 +53,3 @@ def test_orderrow_from_db_rows_fail():
     with pytest.raises(Exception):
         # some Exception should be raise
         _ = OrderRow.from_db_rows(MOCK_INVALID_ROWS)
-
-MOCK_INVALID_ROOMS = [
-    ['room_001', 1, 2]
-]
-
-def test_roomStatus_init():
-    room_id = "room_001"
-    status = 1
-    room_status = RoomStatus(room_id=room_id, is_enable=status)
-    assert room_status.room_id == room_id
-    assert room_status.is_enable == status
-
-def test_roomStatus_from_db_rows_fail():
-    with pytest.raises(Exception):
-        # some Exception should be raise
-        _ = RoomStatus.from_db_rows(MOCK_INVALID_ROOMS)

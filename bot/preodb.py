@@ -1,7 +1,7 @@
 # @Description : Structures for keeping orders from users.
 
 import sqlite3
-from order import RoomStatus, OrderRow, OrderQuery
+from order import OrderRow, OrderQuery
 from roomprop import RoomPropRow, RoomPropQuery
 
 class PreoDB:
@@ -11,9 +11,8 @@ class PreoDB:
     def __create_schema(self):
         "Init table orders in sqlite database"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.INIT_ROOM_SCHEMA)
-        cursor.execute(OrderQuery.INIT_ITEM_SCHEMA)
-        # TODO(M): Init RoomProp schema
+        cursor.execute(RoomPropQuery.INIT_SCHEMA)
+        cursor.execute(OrderQuery.INIT_SCHEMA)
         self.db.commit()
 
     def __init__(self, db_path=DEFAULT_DB_PATH):
@@ -35,28 +34,28 @@ class PreoDB:
         cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_name, item_name])
         self.db.commit()
 
-    def new_room_order(self, room_id):
+    def new_room_order(self, room_id, room_name):
         "Create new room order being enable as default"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.NEW_ROOM_STATUS, [room_id])
+        cursor.execute(RoomPropQuery.INSERT_ROOM_PROP, [room_id, room_name, 1])
         self.db.commit()
 
     def enable_room_order(self, room_id):
         "Enable room order"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SET_ROOM_ENABLE, [room_id])
+        cursor.execute(RoomPropQuery.SET_ROOM_PROP, [1, room_id])
         self.db.commit()
 
     def disable_room_order(self, room_id):
         "Disable room order"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SET_ROOM_DISABLE, [room_id])
+        cursor.execute(RoomPropQuery.SET_ROOM_PROP, [0, room_id])
         self.db.commit()
 
     def is_room_order_exist(self, room_id):
         "Check room order existence"
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ROOM_STATUS, [room_id])
+        cursor.execute(RoomPropQuery.READ_ROOM_PROP, [room_id])
         row = cursor.fetchone()
         return (row != None)
 
@@ -67,18 +66,18 @@ class PreoDB:
         return False if either room is disabled or not created
         '''
         cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ROOM_STATUS, [room_id])
+        cursor.execute(RoomPropQuery.READ_ROOM_PROP, [room_id])
         row = cursor.fetchone()
         if row == None:
             return False
-        roomStatus = RoomStatus.from_db_rows(row)
-        return (roomStatus.is_enable == 1)
+        room_row = RoomPropRow.from_db_row(row)
+        return (room_row.enable == 1)
 
     def del_room_order(self, room_id):
         "Delete room order from the table by room_id"
         cursor = self.db.cursor()
         cursor.execute(OrderQuery.DEL_ORDER_BY_ROOM, [room_id])
-        cursor.execute(OrderQuery.DEL_ROOM_STATUS, [room_id])
+        cursor.execute(RoomPropQuery.DEL_ROOM_PROP, [room_id])
         self.db.commit()
 
     def list_all(self):
