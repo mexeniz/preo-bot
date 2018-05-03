@@ -2,7 +2,7 @@
 
 Preo Bot is a preorder helper bot for Line platform.
 
-Version 0.0.2
+Version 0.0.3
 
 ### Development
 
@@ -83,7 +83,19 @@ Finally, the saved order for Jake will be 1 Milk and the saved order for Bob wil
 !del <user_name> <item>
 ```
 
-- Close the current order.
+- Close the current order list. User cannot update the order list but still can list orders.
+
+```
+!close
+```
+
+- Reopen the closed order list. Then, User can update the order.
+
+```
+!reopen
+```
+
+- End the current order list. All orders will be cleared.
 
 ```
 !end

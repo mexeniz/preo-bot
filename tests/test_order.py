@@ -8,72 +8,48 @@ parentdir = os.path.dirname(currentdir)
 # Include paths for module search
 sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from order import (
-    RoomOrder
+    OrderRow,
 )
-from orderdb import (
-    OrderDB
+from roomprop import (
+    RoomPropRow,
 )
-from response import (
-    Response
-)
-
-TEST_DB_PATH = "/tmp/test-preo-bot.db"
-TEST_ROOM_1 = "room1"
-TEST_ORDER_1 = "order1"
-TEST_ORDER_2 = "order2"
 
 ###########################
-# RoomOrder test cases
+# OrderRow test cases
 ###########################
 
-def create_mock_roomorder():
-    if os.path.exists(TEST_DB_PATH):
-        # clean old test database before init new RoomOrder
-        os.remove(TEST_DB_PATH)
-    room_order = RoomOrder(TEST_DB_PATH)
-    assert isinstance(room_order, RoomOrder)
-    return room_order
+MOCK_ROWS = [
+    ['10001', 'finn', 'milk', 1],
+    ['10001', 'finn', 'steak', 1]
+]
 
-def test_roomorder_init():
-    room_order = RoomOrder(TEST_DB_PATH)
-    assert isinstance(room_order, RoomOrder)
-    assert isinstance(room_order.rooms_enable, dict)
-    assert isinstance(room_order.order_db, OrderDB)
+MOCK_INVALID_ROWS = [
+    ['10001', 'finn', 'milk']
+]
 
-def test_roomorder_new_order():
-    room_order = create_mock_roomorder()
-    reply = room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    assert reply == Response.text(Response.REP_NEW_ORDERLIST_CREATED, TEST_ORDER_1)
-    assert True == room_order.is_order_opened(TEST_ROOM_1)
+def test_orderrow_init():
+    room_id = "10001"
+    user_name = "yoda"
+    item_name = "fishburger"
+    amount = 1
+    order_row = OrderRow(room_id=room_id, user_name=user_name,
+                         item_name=item_name, amount=amount)
+    assert order_row.room_id == room_id
+    assert order_row.user_name == user_name
+    assert order_row.item_name == item_name
+    assert order_row.amount == amount
 
-def test_roomorder_multiple_new_order():
-    room_order = create_mock_roomorder()
-    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    reply = room_order.new_order(TEST_ROOM_1, TEST_ORDER_2)
-    assert reply == Response.text(Response.REP_DUP_ORDERLIST)
-    assert True == room_order.is_order_opened(TEST_ROOM_1)
 
-def test_roomorder_list_order():
-    room_order = create_mock_roomorder()
-    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    reply = room_order.list_order(TEST_ROOM_1)
-    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
+def test_orderrow_from_db_rows_success():
+    order_rows = OrderRow.from_db_rows(MOCK_ROWS)
+    assert len(order_rows) == len(MOCK_ROWS)
+    for idx, order_row in enumerate(order_rows):
+        assert order_row.room_id == MOCK_ROWS[idx][0]
+        assert order_row.user_name == MOCK_ROWS[idx][1]
+        assert order_row.item_name == MOCK_ROWS[idx][2]
+        assert order_row.amount == MOCK_ROWS[idx][3]
 
-def test_roomorder_close_order_success():
-    room_order = create_mock_roomorder()
-    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    assert Response.text(Response.REP_ORDERLIST_CLOSED) == room_order.close_order(TEST_ROOM_1)
-    assert False == room_order.is_order_opened(TEST_ROOM_1)
-    # try to close again
-    assert Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED) == room_order.close_order(TEST_ROOM_1)
-
-def test_roomorder_close_order_fail():
-    room_order = create_mock_roomorder()
-    assert None == room_order.close_order(TEST_ROOM_1)
-
-def test_roomorder_end_order():
-    room_order = create_mock_roomorder()
-    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    reply = room_order.end_order(TEST_ROOM_1)
-    assert reply == Response.text(Response.REP_END_ORDERLIST)
-    assert False == room_order.is_order_opened(TEST_ROOM_1)
+def test_orderrow_from_db_rows_fail():
+    with pytest.raises(Exception):
+        # some Exception should be raise
+        _ = OrderRow.from_db_rows(MOCK_INVALID_ROWS)

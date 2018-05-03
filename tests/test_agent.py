@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from agent import (
     Agent, BotCMD, GroupParser
 )
-from order import (
+from roomorder import (
     RoomOrder
 )
 from linebot.models import (
@@ -37,6 +37,7 @@ def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("del") == BotCMD.DEL_ORDER
     assert BotCMD.parse_command("list") == BotCMD.LIST_ORDER
     assert BotCMD.parse_command("close") == BotCMD.CLOSE_ORDER
+    assert BotCMD.parse_command("open") == BotCMD.OPEN_ORDER
     assert BotCMD.parse_command("end") == BotCMD.END_ORDER
     assert BotCMD.parse_command("help") == BotCMD.HELP
     assert BotCMD.parse_command("") == BotCMD.UNKNOWN_CMD
@@ -87,6 +88,7 @@ def test_bot_group_parser():
         "cmd": "del", "user_name": "food", "item": "food", "num": "3"}
     assert GroupParser.parse_text_group("!list") == {"cmd": "list"}
     assert GroupParser.parse_text_group("!close") == {"cmd": "close"}
+    assert GroupParser.parse_text_group("!open") == {"cmd": "open"}
     assert GroupParser.parse_text_group("!end") == {"cmd": "end"}
     assert GroupParser.parse_text_group("!help") == {"cmd": "help"}
     # From Real Command (mixed and upper case)
@@ -182,12 +184,18 @@ def test_agent_handle_new_order():
 
 def test_agent_handle_add_order():
     agent = create_mock_agent()
+    agent._Agent__handle_new_order(
+        room_id=TEST_ROOM_1, name=TEST_ORDER_1)
     assert agent._Agent__handle_add_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1, amount=1) != None
 
 
 def test_agent_handle_del_order():
     agent = create_mock_agent()
+    agent._Agent__handle_new_order(
+        room_id=TEST_ROOM_1, name=TEST_ORDER_1)
+    agent._Agent__handle_add_order(
+        room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1, amount=1)
     assert agent._Agent__handle_del_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1) != None
 
@@ -203,6 +211,11 @@ def test_agent_handle_close_order():
     agent._Agent__handle_new_order(room_id=TEST_ROOM_1, name=TEST_ORDER_1)
     assert agent._Agent__handle_close_order(room_id=TEST_ROOM_1) != None
 
+def test_agent_handle_open_order():
+    agent = create_mock_agent()
+    agent._Agent__handle_new_order(room_id=TEST_ROOM_1, name=TEST_ORDER_1)
+    agent._Agent__handle_close_order(room_id=TEST_ROOM_1)
+    assert agent._Agent__handle_open_order(room_id=TEST_ROOM_1) != None
 
 def test_agent_handle_end_order():
     agent = create_mock_agent()
