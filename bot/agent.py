@@ -85,8 +85,8 @@ class GroupParser():
 
 class Agent():
     """Chatbot agent for handling incoming message event"""
-    HELP_MESSAGE = "\n".join(["Help message", "!new <list_name>", "!add <user_name> <item> <amount>",
-                              "!del <user_name> <item> <amount>", "!end", "!list", "!help"])
+    HELP_MESSAGE = "\n".join(["Available PreoBot commands", "!new <list_name>", "!add <user_name> <item> <amount>",
+                              "!del <user_name> <item>", "!end", "!open", "!close", "!list", "!help"])
 
     def __init__(self, **kwargs):
         if 'db_path' in kwargs:
