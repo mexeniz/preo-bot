@@ -8,7 +8,10 @@ parentdir = os.path.dirname(currentdir)
 # Include paths for module search
 sys.path.insert(0, os.path.join(parentdir, 'bot'))
 from order import (
-    OrderRow
+    OrderRow,
+)
+from roomprop import (
+    RoomPropRow,
 )
 
 ###########################

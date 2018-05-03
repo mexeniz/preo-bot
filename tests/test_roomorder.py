@@ -46,7 +46,6 @@ def create_mock_roomorder():
 def test_roomorder_init():
     room_order = RoomOrder(TEST_DB_PATH)
     assert isinstance(room_order, RoomOrder)
-    assert isinstance(room_order.rooms_enable, dict)
     assert isinstance(room_order.preo_db, PreoDB)
 
 def test_roomorder_new_order():

@@ -34,9 +34,8 @@ def test_roomproprow_init():
     assert room_prop_row.enable == enable
 
 def test_roomproprow_from_db_rows_success():
-    room_prop_rows = RoomPropRow.from_db_rows(MOCK_ROWS)
-    assert len(room_prop_rows) == len(MOCK_ROWS)
-    for idx, room_prop_row in enumerate(room_prop_rows):
+    for idx, mock_row in enumerate(MOCK_ROWS):
+        room_prop_row = RoomPropRow.from_db_row(mock_row)
         assert room_prop_row.room_id == MOCK_ROWS[idx][0]
         assert room_prop_row.list_name == MOCK_ROWS[idx][1]
         assert room_prop_row.enable == MOCK_ROWS[idx][2]
@@ -44,4 +43,4 @@ def test_roomproprow_from_db_rows_success():
 def test_roomproprow_from_db_rows_fail():
     with pytest.raises(Exception):
         # some Exception should be raise
-        _ = RoomPropRow.from_db_rows(MOCK_INVALID_ROWS)
+        _ = RoomPropRow.from_db_row(MOCK_INVALID_ROWS)

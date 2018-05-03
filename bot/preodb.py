@@ -11,8 +11,8 @@ class PreoDB:
     def __create_schema(self):
         "Init table orders in sqlite database"
         cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.INIT_SCHEMA)
         cursor.execute(OrderQuery.INIT_SCHEMA)
-        # TODO(M): Init RoomProp schema 
         self.db.commit()
 
     def __init__(self, db_path=DEFAULT_DB_PATH):
@@ -34,10 +34,50 @@ class PreoDB:
         cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_name, item_name])
         self.db.commit()
 
+    def new_room_order(self, room_id, room_name):
+        "Create new room order being enable as default"
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.INSERT_ROOM_PROP, [room_id, room_name, 1])
+        self.db.commit()
+
+    def enable_room_order(self, room_id):
+        "Enable room order"
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.SET_ROOM_PROP, [1, room_id])
+        self.db.commit()
+
+    def disable_room_order(self, room_id):
+        "Disable room order"
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.SET_ROOM_PROP, [0, room_id])
+        self.db.commit()
+
+    def is_room_order_exist(self, room_id):
+        "Check room order existence"
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.READ_ROOM_PROP, [room_id])
+        row = cursor.fetchone()
+        return (row != None)
+
+    def is_room_order_enable(self, room_id):
+        '''
+        Check room order status
+        return True if room is enabled
+        return False if either room is disabled or not created
+        '''
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.READ_ROOM_PROP, [room_id])
+        row = cursor.fetchone()
+        if row == None:
+            return False
+        room_row = RoomPropRow.from_db_row(row)
+        return (room_row.enable == 1)
+
     def del_room_order(self, room_id):
-        "Delete room orders from the table by room_id"
+        "Delete room order from the table by room_id"
         cursor = self.db.cursor()
         cursor.execute(OrderQuery.DEL_ORDER_BY_ROOM, [room_id])
+        cursor.execute(RoomPropQuery.DEL_ROOM_PROP, [room_id])
         self.db.commit()
 
     def list_all(self):
