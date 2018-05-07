@@ -2,9 +2,11 @@
 
 ![Preo Bot Logo](/img/preo-bot.png)
 
-Preo Bot is a preorder helper bot for Line platform.
+Preo Bot is a chat bot for keeping orders on LINE platform. In a chat room, the bot will be your assistant when you and your friends need to collect meal orders.
 
 Version 0.0.3
+
+Logo by [zentinel](https://www.behance.net/zentinel)
 
 ### Development
 
