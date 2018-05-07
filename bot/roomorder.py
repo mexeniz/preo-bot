@@ -38,9 +38,9 @@ class RoomOrder:
             print("Error: room order %s is not enable" % (room_id))
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
         if not self.preo_db.get_user_item_order(room_id, user_name, item_name):
-            # Iten is not exist.
-            print("Error: item %s for %s is not exist in %s" % (item_name, user_name, room_id))
-            return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, room_id, user_name, item_name)
+            # Item doest not exist.
+            print("Error: item %s for %s doest not exist in %s" % (item_name, user_name, room_id))
+            return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, user_name, item_name)
 
         self.preo_db.del_order(room_id, user_name, item_name)
         return Response.text(Response.REP_DEL_ITEM, user_name, item_name)

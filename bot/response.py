@@ -47,8 +47,8 @@ class Response:
             if code == Response.REP_ADD_ITEM: return "Update: %s has ordered %d %s" % (args[0], args[2], args[1])
             # user_name, order_text
             if code == Response.REP_DEL_ITEM: return "Update: %s has deleted %s order" % (args[0], args[1])
-            # list_name, user_name , order_text
-            if code == Response.REP_DEL_NOT_EXIST_ITEM: return "%s for %s is not exist in %s" % (args[2], args[1], args[0])
+            # user_name, item_name
+            if code == Response.REP_DEL_NOT_EXIST_ITEM: return "%s for %s does not exist in order list" % (args[1], args[0])
             # -
             if code == Response.REP_OPEN_ORDERLIST: return "Order is opened"
             # -
