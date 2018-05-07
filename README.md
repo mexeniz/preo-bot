@@ -1,5 +1,7 @@
 ## Welcome to Preo Bot Pages
 
+![Preo Bot Logo](/img/preo-bot.png)
+
 Preo Bot is a preorder helper bot for Line platform.
 
 Version 0.0.3
@@ -92,7 +94,7 @@ Finally, the saved order for Jake will be 1 Milk and the saved order for Bob wil
 - Reopen the closed order list. Then, User can update the order.
 
 ```
-!reopen
+!open
 ```
 
 - End the current order list. All orders will be cleared.
