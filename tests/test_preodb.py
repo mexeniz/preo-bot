@@ -68,6 +68,7 @@ def test_preodb_init():
     assert preo_db != None
     assert isinstance(preo_db, PreoDB)
 
+############ Test Order table ############
 
 def test_preodb_set_order_success():
     clean_db()
@@ -143,3 +144,20 @@ def test_preodb_get_item_order():
     assert count_item_amount(orders, 'milk') == 5
     orders = preo_db.get_item_order('10001', 'bread')
     assert count_item_amount(orders, 'bread') == 2
+
+############ Test RoomProp table ############
+
+def test_preodb_new_room_order():
+    pass
+
+def test_preodb_enable_room_order():
+    pass
+
+def test_preodb_disable_room_order():
+    pass
+
+def test_preodb_is_room_order_exist():
+    pass
+
+def test_preodb_is_room_order_enable():
+    pass
