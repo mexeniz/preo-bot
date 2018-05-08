@@ -18,6 +18,10 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 # PreoDB test cases
 ###########################
 
+MOCK_ROOMPROPS = [
+    ['10001', 'list1', 1],
+    ['10002', 'list2', 1]
+]
 
 MOCK_ORDERS = [
     # first room
@@ -36,6 +40,12 @@ MOCK_ORDERS = [
     ['10002', 'phasma', 'milk', 2],
     ['10002', 'krennic', 'tea', 1]
 ]
+
+INVALID_MOCK_ROOMPROPS = [
+    ['10001', None, -1],
+    [None, 'list2', 1]
+]
+
 INVALID_MOCK_ORDERS = [
     ['10002', 'hux', 'bread', -5],
     ['10002', 'hux', 'milk', 0],
@@ -52,6 +62,8 @@ def clean_db():
 def insert_mock_data(preo_db):
     for data in MOCK_ORDERS:
         preo_db.set_order(data[0], data[1], data[2], data[3])
+    for data in MOCK_ROOMPROPS:
+        preo_db.new_room_order(data[0], data[1])
 
 
 def count_item_amount(orders, item_name):
@@ -69,6 +81,7 @@ def test_preodb_init():
     assert isinstance(preo_db, PreoDB)
 
 ############ Test Order table ############
+
 
 def test_preodb_set_order_success():
     clean_db()
@@ -147,17 +160,56 @@ def test_preodb_get_item_order():
 
 ############ Test RoomProp table ############
 
-def test_preodb_new_room_order():
-    pass
+
+def test_preodb_new_room_order_success():
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    for data in MOCK_ROOMPROPS:
+        preo_db.new_room_order(data[0], data[1])
+    for data in MOCK_ROOMPROPS:
+        is_exist = preo_db.is_room_order_exist(data[0])
+        assert is_exist
+
+
+def test_preodb_new_room_order_fail():
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    for data in INVALID_MOCK_ROOMPROPS:
+        with pytest.raises(sqlite3.IntegrityError):
+            preo_db.new_room_order(data[0], data[1])
+
 
 def test_preodb_enable_room_order():
-    pass
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    insert_mock_data(preo_db)
+    preo_db.disable_room_order('10001')
+    preo_db.enable_room_order('10001')
+    assert preo_db.is_room_order_enable('10001')
+
 
 def test_preodb_disable_room_order():
-    pass
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    insert_mock_data(preo_db)
+    preo_db.disable_room_order('10001')
+    assert not preo_db.is_room_order_enable('10001')
+
 
 def test_preodb_is_room_order_exist():
-    pass
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    insert_mock_data(preo_db)
+    assert preo_db.is_room_order_exist('10001')
+    # Should return false, if room id does not exist.
+    assert not preo_db.is_room_order_exist('11111')
+
 
 def test_preodb_is_room_order_enable():
-    pass
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    insert_mock_data(preo_db)
+    # New room prop is enabled by default.
+    assert preo_db.is_room_order_enable('10001')
+    # Should return false, if room id does not exist.
+    assert not preo_db.is_room_order_enable('11111')
