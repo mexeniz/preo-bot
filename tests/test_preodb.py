@@ -19,8 +19,8 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 ###########################
 
 MOCK_ROOMPROPS = [
-    ['10001', 'list1', 1],
-    ['10002', 'list2', 1]
+    ['10001', 'list1'],
+    ['10002', 'list2']
 ]
 
 MOCK_ORDERS = [
@@ -117,10 +117,15 @@ def test_preodb_del_room_order():
     clean_db()
     preo_db = PreoDB(TEST_DB_PATH)
     insert_mock_data(preo_db)
+    assert preo_db.is_room_order_exist('10001')
     preo_db.del_room_order('10001')
+    assert not preo_db.is_room_order_exist('10001')
     orders = preo_db.get_room_order('10001')
     assert len(orders) == 0
+
+    assert preo_db.is_room_order_exist('10002')
     preo_db.del_room_order('10002')
+    assert not preo_db.is_room_order_exist('10002')
     orders = preo_db.get_room_order('10002')
     assert len(orders) == 0
 
