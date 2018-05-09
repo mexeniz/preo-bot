@@ -138,9 +138,9 @@ def test_roomorder_del_not_exist_item():
     room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2)
-    assert reply == Response.text(Response.REP_DEL_NOT_EXIST_ITEM, TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2)
+    assert reply == Response.text(Response.REP_DEL_NOT_EXIST_ITEM, TEST_USER_NAME_1, TEST_ITEM_2)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_1)
-    assert reply == Response.text(Response.REP_DEL_NOT_EXIST_ITEM, TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_1)
+    assert reply == Response.text(Response.REP_DEL_NOT_EXIST_ITEM, TEST_USER_NAME_2, TEST_ITEM_1)
 
 def test_roomorder_del_item_after_closing_order():
     room_order = create_mock_roomorder()
