@@ -54,13 +54,13 @@ def test_roomorder_new_order():
     assert reply == Response.text(Response.REP_NEW_ORDERLIST_CREATED, TEST_ORDER_1)
     assert True == room_order.is_order_opened(TEST_ROOM_1)
 
-def test_roomorder_add_item():
+def test_roomorder_set_item():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
-    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
 
 def test_roomorder_multiple_new_order():
     room_order = create_mock_roomorder()
@@ -75,30 +75,30 @@ def test_roomorder_list_order():
     reply = room_order.list_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
 
-def test_roomorder_add_item_after_closing_order():
+def test_roomorder_set_item_after_closing_order():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     # Close order
     assert Response.text(Response.REP_ORDERLIST_CLOSED) == room_order.close_order(TEST_ROOM_1)
     assert False == room_order.is_order_opened(TEST_ROOM_1)
     # Try to add new item
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
     assert reply == Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
 
 def test_roomorder_update_item():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
     # Add item for first time
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     reply = room_order.list_order(TEST_ROOM_1)
     text = _mock_print_user_item_amount(TEST_USER_NAME_1, TEST_ITEM_1, str(TEST_AMOUNT_1))
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, text)
     # Update existing item
-    reply = room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
-    assert reply == Response.text(Response.REP_ADD_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
+    reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
+    assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
     reply = room_order.list_order(TEST_ROOM_1)
     text = _mock_print_user_item_amount(TEST_USER_NAME_1, TEST_ITEM_1, str(TEST_AMOUNT_2))
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, text)
@@ -125,8 +125,8 @@ def test_roomorder_end_order():
 def test_roomorder_del_item():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1)
     assert reply == Response.text(Response.REP_DEL_ITEM, TEST_USER_NAME_1, TEST_ITEM_1)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2)
@@ -135,8 +135,8 @@ def test_roomorder_del_item():
 def test_roomorder_del_not_exist_item():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_2, TEST_AMOUNT_2)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2)
     assert reply == Response.text(Response.REP_DEL_NOT_EXIST_ITEM, TEST_USER_NAME_1, TEST_ITEM_2)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_1)
@@ -145,7 +145,7 @@ def test_roomorder_del_not_exist_item():
 def test_roomorder_del_item_after_closing_order():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     room_order.close_order(TEST_ROOM_1)
     reply = room_order.delete_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2)
     assert reply == Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
@@ -153,7 +153,7 @@ def test_roomorder_del_item_after_closing_order():
 def test_roomorder_open_order():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     room_order.close_order(TEST_ROOM_1)
     reply = room_order.open_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_OPEN_ORDERLIST)
@@ -165,7 +165,7 @@ def test_roomorder_open_opened_order():
     reply = room_order.open_order(TEST_ROOM_1)
     assert reply == Response.text(Response.REP_ORDERLIST_ALREADY_OPENED)
     assert True == room_order.is_order_opened(TEST_ROOM_1)
-    room_order.add_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     room_order.close_order(TEST_ROOM_1)
     room_order.open_order(TEST_ROOM_1)
     #open order agian

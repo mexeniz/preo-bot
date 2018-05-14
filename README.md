@@ -63,21 +63,21 @@ A chat room can have only one existing order list at the same time.
 !new <order_name>
 ```
 
-- Add new item to the order list
+- Set new item to the order list
 
 ```
-!add <user_name> <item> <amount>
+!set <user_name> <item> <amount>
 ```
 
 **Remark** : This command will replace the existing item order.
 For example, Preo bot receives a sequence of command like this:
 
 ```
-!add Jack Milk 3
-!add Bob Milk 4
-!add Jack Milk 5
-!add Bob Milk 2
-!add Jack Milk 1
+!set Jack Milk 3
+!set Bob Milk 4
+!set Jack Milk 5
+!set Bob Milk 2
+!set Jack Milk 1
 ```
 Finally, the saved order for Jake will be 1 Milk and the saved order for Bob will be 2 Milk.
 

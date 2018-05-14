@@ -13,7 +13,7 @@ class RoomOrder:
         self.preo_db.new_room_order(room_id, list_name)
         return Response.text(Response.REP_NEW_ORDERLIST_CREATED, list_name)
 
-    def add_item(self, room_id, user_name, item_name, amount):
+    def set_item(self, room_id, user_name, item_name, amount):
         if not self.preo_db.is_room_order_exist(room_id):
             # Room order has not been created yet.
             print("Error: room order %s does not exist" % (room_id))
@@ -25,7 +25,7 @@ class RoomOrder:
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
 
         self.preo_db.set_order(room_id, user_name, item_name, amount)
-        return Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
+        return Response.text(Response.REP_SET_ITEM, user_name, item_name, amount)
 
     def delete_item(self, room_id, user_name, item_name):
         if not self.preo_db.is_room_order_exist(room_id):

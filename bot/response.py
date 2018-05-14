@@ -11,7 +11,7 @@ class Response:
     REP_ORDERLIST_CLOSED = 5
     REP_ORDER_PRINT = 6
     REP_ORDERLIST_ALREADY_CLOSED = 7
-    REP_ADD_ITEM = 8
+    REP_SET_ITEM = 8
     REP_DEL_ITEM = 9
     REP_DEL_NOT_EXIST_ITEM = 10
     REP_OPEN_ORDERLIST = 11
@@ -44,7 +44,7 @@ class Response:
             # list_name, order_text
             if code == Response.REP_ORDER_PRINT: return "====== Order '%s' ======\n%s" % args
             # user_name, order_text
-            if code == Response.REP_ADD_ITEM: return "Update: %s has ordered %d %s" % (args[0], args[2], args[1])
+            if code == Response.REP_SET_ITEM: return "Update: %s has ordered %d %s" % (args[0], args[2], args[1])
             # user_name, order_text
             if code == Response.REP_DEL_ITEM: return "Update: %s has deleted %s order" % (args[0], args[1])
             # user_name, item_name
