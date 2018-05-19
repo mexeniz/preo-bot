@@ -69,11 +69,28 @@ def test_roomorder_multiple_new_order():
     assert reply == Response.text(Response.REP_DUP_ORDERLIST)
     assert True == room_order.is_order_opened(TEST_ROOM_1)
 
-def test_roomorder_list_order():
+def test_roomorder_list_order_empty():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
     reply = room_order.list_order(TEST_ROOM_1)
-    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, "")
+    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, TEST_ORDER_1, "")
+
+def test_roomorder_list_order_filled():
+    room_order = create_mock_roomorder()
+    room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
+    # Set orders
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_1, TEST_AMOUNT_2)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2, TEST_AMOUNT_1)
+    # Expected summary list
+    item1_amount = TEST_AMOUNT_1 + TEST_AMOUNT_2
+    item2_amount = TEST_AMOUNT_1
+    exp_sum = [
+        "%s %d: %s %s(%d)" % (TEST_ITEM_1, item1_amount, TEST_USER_NAME_1, TEST_USER_NAME_2, TEST_AMOUNT_2),
+        "%s %d: %s" % (TEST_ITEM_2, item2_amount, TEST_USER_NAME_1)
+    ]
+    reply = room_order.list_order(TEST_ROOM_1)
+    assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, TEST_ORDER_1, "\n".join(exp_sum))
 
 def test_roomorder_set_item_after_closing_order():
     room_order = create_mock_roomorder()
@@ -118,8 +135,19 @@ def test_roomorder_close_order_fail():
 def test_roomorder_end_order():
     room_order = create_mock_roomorder()
     room_order.new_order(TEST_ROOM_1, TEST_ORDER_1)
+    # Set orders
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_2, TEST_ITEM_1, TEST_AMOUNT_2)
+    room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_2, TEST_AMOUNT_1)
+    # Expected summary list
+    item1_amount = TEST_AMOUNT_1 + TEST_AMOUNT_2
+    item2_amount = TEST_AMOUNT_1
+    exp_sum = [
+        "%s %d: %s %s(%d)" % (TEST_ITEM_1, item1_amount, TEST_USER_NAME_1, TEST_USER_NAME_2, TEST_AMOUNT_2),
+        "%s %d: %s" % (TEST_ITEM_2, item2_amount, TEST_USER_NAME_1)
+    ]
     reply = room_order.end_order(TEST_ROOM_1)
-    assert reply == Response.text(Response.REP_END_ORDERLIST)
+    assert reply == Response.text(Response.REP_END_ORDERLIST, TEST_ORDER_1, "\n".join(exp_sum))
     assert False == room_order.is_order_opened(TEST_ROOM_1)
 
 def test_roomorder_del_item():
