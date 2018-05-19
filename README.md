@@ -99,19 +99,29 @@ Finally, the saved order for Jake will be 1 Milk and the saved order for Bob wil
 !open
 ```
 
-- End the current order list. All orders will be cleared.
-
-```
-!end
-```
-
-- Show all items in the order list
+- Show all items in the order list. Each order is grouped by an item name and appended with its amount and a list of ordering users.
 
 ```
 !list
 ```
 
+Example list response
+
+```
+===== 7-11 Order Summary =====
+milk 4: Bob Jack(2) Mike
+cocoa 2: Zack Kate
+tea 3: Alice(3)
+```
+
+- End the current order list. Like list command, a summary of orders will be shown and orders will be cleared.
+
+```
+!end
+```
+
 - Show help message
+
 
 ```
 !help
