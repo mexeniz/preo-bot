@@ -26,6 +26,6 @@ class RoomPropRow:
     @classmethod
     def from_db_row(cls, row):
         try:
-            return RoomPropRow(room_id=row[0], list_name=row[1], enable=int(row[2]))
+            return cls.__init__(room_id=row[0], list_name=row[1], enable=int(row[2]))
         except Exception:
             raise

@@ -120,47 +120,47 @@ def test_preodb_del_room_order():
     assert preo_db.is_room_order_exist('10001')
     preo_db.del_room_order('10001')
     assert not preo_db.is_room_order_exist('10001')
-    orders = preo_db.get_room_order('10001')
+    orders = preo_db.get_order_by_room('10001')
     assert len(orders) == 0
 
     assert preo_db.is_room_order_exist('10002')
     preo_db.del_room_order('10002')
     assert not preo_db.is_room_order_exist('10002')
-    orders = preo_db.get_room_order('10002')
+    orders = preo_db.get_order_by_room('10002')
     assert len(orders) == 0
 
 
-def test_preodb_get_room_order():
+def test_preodb_get_order_by_room():
     clean_db()
     preo_db = PreoDB(TEST_DB_PATH)
     insert_mock_data(preo_db)
-    orders = preo_db.get_room_order('10000')
+    orders = preo_db.get_order_by_room('10000')
     assert len(orders) == 0
-    orders = preo_db.get_room_order('10001')
+    orders = preo_db.get_order_by_room('10001')
     assert len(orders) == 6
 
 
-def test_preodb_get_user_order():
+def test_preodb_get_order_by_user():
     clean_db()
     preo_db = PreoDB(TEST_DB_PATH)
     insert_mock_data(preo_db)
-    orders = preo_db.get_user_order('10001', 'noone')
+    orders = preo_db.get_order_by_user('10001', 'noone')
     assert len(orders) == 0
-    orders = preo_db.get_user_order('10001', 'finn')
+    orders = preo_db.get_order_by_user('10001', 'finn')
     assert len(orders) == 2
-    orders = preo_db.get_user_order('10001', 'rey')
+    orders = preo_db.get_order_by_user('10001', 'rey')
     assert len(orders) == 2
 
 
-def test_preodb_get_item_order():
+def test_preodb_get_order_by_item():
     clean_db()
     preo_db = PreoDB(TEST_DB_PATH)
     insert_mock_data(preo_db)
-    orders = preo_db.get_item_order('10001', 'rice')
+    orders = preo_db.get_order_by_item('10001', 'rice')
     assert count_item_amount(orders, 'rice') == 0
-    orders = preo_db.get_item_order('10001', 'milk')
+    orders = preo_db.get_order_by_item('10001', 'milk')
     assert count_item_amount(orders, 'milk') == 5
-    orders = preo_db.get_item_order('10001', 'bread')
+    orders = preo_db.get_order_by_item('10001', 'bread')
     assert count_item_amount(orders, 'bread') == 2
 
 ############ Test RoomProp table ############
@@ -183,6 +183,14 @@ def test_preodb_new_room_order_fail():
         with pytest.raises(sqlite3.IntegrityError):
             preo_db.new_room_order(data[0], data[1])
 
+
+def test_preodb_get_room_order():
+    clean_db()
+    preo_db = PreoDB(TEST_DB_PATH)
+    insert_mock_data(preo_db)
+    assert preo_db.get_room_order('10001') != None
+    assert preo_db.get_room_order('10002') != None
+    assert preo_db.get_room_order('10003') == None
 
 def test_preodb_enable_room_order():
     clean_db()

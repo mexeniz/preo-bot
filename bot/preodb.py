@@ -34,11 +34,59 @@ class PreoDB:
         cursor.execute(OrderQuery.DEL_ORDER_BY_USER, [room_id, user_name, item_name])
         self.db.commit()
 
+    def list_all(self):
+        "List all orders from the table"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ALL_ORDER)
+        rows = cursor.fetchall()
+        return rows
+
+    def get_order_by_room(self, room_id):
+        "List orders by room_id"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_ROOM, [room_id])
+        rows = cursor.fetchall()
+        return OrderRow.from_db_rows(rows)
+
+    def get_order_by_user(self, room_id, user_name):
+        "List orders by room_id and user_name"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER, [room_id, user_name])
+        rows = cursor.fetchall()
+        return OrderRow.from_db_rows(rows)
+
+    def get_order_by_item(self, room_id, item_name):
+        "List orders by room_id and item_name"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_ITEM, [room_id, item_name])
+        rows = cursor.fetchall()
+        return OrderRow.from_db_rows(rows)
+
+    def get_order_by_user_item(self, room_id, user_name, item_name):
+        "List orders by room_id , user_name and item_name"
+        cursor = self.db.cursor()
+        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER_AND_ITEM, [room_id, user_name, item_name])
+        rows = cursor.fetchall()
+        return OrderRow.from_db_rows(rows)
+
+    ##################
+    # RoomProp Table
+    ##################
+
     def new_room_order(self, room_id, room_name):
         "Create new room order being enable as default"
         cursor = self.db.cursor()
         cursor.execute(RoomPropQuery.INSERT_ROOM_PROP, [room_id, room_name, 1])
         self.db.commit()
+
+    def get_room_order(self, room_id):
+        "Get a room order by room id"
+        cursor = self.db.cursor()
+        cursor.execute(RoomPropQuery.READ_ROOM_PROP, [room_id])
+        row = cursor.fetchone()
+        if row == None:
+            return None
+        return RoomPropRow.from_db_row(row)
 
     def enable_room_order(self, room_id):
         "Enable room order"
@@ -79,38 +127,3 @@ class PreoDB:
         cursor.execute(OrderQuery.DEL_ORDER_BY_ROOM, [room_id])
         cursor.execute(RoomPropQuery.DEL_ROOM_PROP, [room_id])
         self.db.commit()
-
-    def list_all(self):
-        "List all orders from the table"
-        cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ALL_ORDER)
-        rows = cursor.fetchall()
-        return rows
-
-    def get_room_order(self, room_id):
-        "List orders by room_id"
-        cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ORDER_BY_ROOM, [room_id])
-        rows = cursor.fetchall()
-        return OrderRow.from_db_rows(rows)
-
-    def get_user_order(self, room_id, user_name):
-        "List orders by room_id and user_name"
-        cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER, [room_id, user_name])
-        rows = cursor.fetchall()
-        return OrderRow.from_db_rows(rows)
-
-    def get_item_order(self, room_id, item_name):
-        "List orders by room_id and item_name"
-        cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ORDER_BY_ITEM, [room_id, item_name])
-        rows = cursor.fetchall()
-        return OrderRow.from_db_rows(rows)
-
-    def get_user_item_order(self, room_id, user_name, item_name):
-        "List orders by room_id , user_name and item_name"
-        cursor = self.db.cursor()
-        cursor.execute(OrderQuery.SELECT_ORDER_BY_USER_AND_ITEM, [room_id, user_name, item_name])
-        rows = cursor.fetchall()
-        return OrderRow.from_db_rows(rows)

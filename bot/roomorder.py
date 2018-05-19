@@ -37,7 +37,7 @@ class RoomOrder:
             # Room order is not enabled.
             print("Error: room order %s is not enabled" % (room_id))
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
-        if not self.preo_db.get_user_item_order(room_id, user_name, item_name):
+        if not self.preo_db.get_order_by_user_item(room_id, user_name, item_name):
             # Item does not exist.
             print("Error: item %s for %s does not exist in %s" % (item_name, user_name, room_id))
             return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, user_name, item_name)
@@ -46,17 +46,19 @@ class RoomOrder:
         return Response.text(Response.REP_DEL_ITEM, user_name, item_name)
 
     def list_order(self, room_id):
-        if not self.preo_db.is_room_order_exist(room_id):
+        room_order = self.preo_db.get_room_order(room_id)
+        if room_order == None:
             # Room order has not been created yet.
             print("Error: room order %s does not exist" % (room_id))
             return None
 
+        # TODO(M): Create summarized order list
         text = ""
-        order_list = self.preo_db.get_room_order(room_id)
+        order_list = self.preo_db.get_order_by_room(room_id)
         for order in order_list:
             text += self.__order_print_user_item_amount(order) + "\n"
         text = text[:-1]
-        return Response.text(Response.REP_SUMMARY_ORDERLIST, text)
+        return Response.text(Response.REP_SUMMARY_ORDERLIST, room_order.list_name, text)
 
     def close_order(self, room_id):
         if not self.preo_db.is_room_order_exist(room_id):
@@ -92,13 +94,21 @@ class RoomOrder:
         return self.preo_db.is_room_order_enable(room_id)
 
     def end_order(self, room_id):
-        if not self.preo_db.is_room_order_exist(room_id):
+        room_order = self.preo_db.get_room_order(room_id)
+        if room_order == None:
             # Room order has not been created.
             print("Error: room order %s does not exist" % (room_id))
             return None
 
+        # TODO(M): Create summarized order list
+        text = ""
+        order_list = self.preo_db.get_order_by_room(room_id)
+        for order in order_list:
+            text += self.__order_print_user_item_amount(order) + "\n"
+        text = text[:-1]
         self.preo_db.del_room_order(room_id)
-        return Response.text(Response.REP_END_ORDERLIST)
+        
+        return Response.text(Response.REP_END_ORDERLIST, room_order.list_name, text)
 
     @staticmethod
     def __order_print_user_item_amount(order):
