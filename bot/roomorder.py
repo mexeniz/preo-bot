@@ -13,7 +13,7 @@ class RoomOrder:
         self.preo_db.new_room_order(room_id, list_name)
         return Response.text(Response.REP_NEW_ORDERLIST_CREATED, list_name)
 
-    def add_item(self, room_id, user_name, item_name, amount):
+    def set_item(self, room_id, user_name, item_name, amount):
         if not self.preo_db.is_room_order_exist(room_id):
             # Room order has not been created yet.
             print("Error: room order %s does not exist" % (room_id))
@@ -21,11 +21,11 @@ class RoomOrder:
 
         if not self.preo_db.is_room_order_enable(room_id):
             # Room order is not enabled.
-            print("Error: room order %s is not enable" % (room_id))
+            print("Error: room order %s is not enabled" % (room_id))
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
 
         self.preo_db.set_order(room_id, user_name, item_name, amount)
-        return Response.text(Response.REP_ADD_ITEM, user_name, item_name, amount)
+        return Response.text(Response.REP_SET_ITEM, user_name, item_name, amount)
 
     def delete_item(self, room_id, user_name, item_name):
         if not self.preo_db.is_room_order_exist(room_id):
@@ -35,28 +35,26 @@ class RoomOrder:
 
         if not self.preo_db.is_room_order_enable(room_id):
             # Room order is not enabled.
-            print("Error: room order %s is not enable" % (room_id))
+            print("Error: room order %s is not enabled" % (room_id))
             return Response.text(Response.REP_ORDERLIST_ALREADY_CLOSED)
-        if not self.preo_db.get_user_item_order(room_id, user_name, item_name):
-            # Iten is not exist.
-            print("Error: item %s for %s is not exist in %s" % (item_name, user_name, room_id))
-            return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, room_id, user_name, item_name)
+        if not self.preo_db.get_order_by_user_item(room_id, user_name, item_name):
+            # Item does not exist.
+            print("Error: item %s for %s does not exist in %s" % (item_name, user_name, room_id))
+            return Response.text(Response.REP_DEL_NOT_EXIST_ITEM, user_name, item_name)
 
         self.preo_db.del_order(room_id, user_name, item_name)
         return Response.text(Response.REP_DEL_ITEM, user_name, item_name)
 
     def list_order(self, room_id):
-        if not self.preo_db.is_room_order_exist(room_id):
+        room_order = self.preo_db.get_room_order(room_id)
+        if room_order == None:
             # Room order has not been created yet.
             print("Error: room order %s does not exist" % (room_id))
             return None
 
-        text = ""
-        order_list = self.preo_db.get_room_order(room_id)
-        for order in order_list:
-            text += self.__order_print_user_item_amount(order) + "\n"
-        text = text[:-1]
-        return Response.text(Response.REP_SUMMARY_ORDERLIST, text)
+        order_list = self.preo_db.get_order_by_room(room_id)
+        text = self.__order_list_to_str(order_list)
+        return Response.text(Response.REP_SUMMARY_ORDERLIST, room_order.list_name, text)
 
     def close_order(self, room_id):
         if not self.preo_db.is_room_order_exist(room_id):
@@ -92,17 +90,41 @@ class RoomOrder:
         return self.preo_db.is_room_order_enable(room_id)
 
     def end_order(self, room_id):
-        if not self.preo_db.is_room_order_exist(room_id):
+        room_order = self.preo_db.get_room_order(room_id)
+        if room_order == None:
             # Room order has not been created.
             print("Error: room order %s does not exist" % (room_id))
             return None
 
+        order_list = self.preo_db.get_order_by_room(room_id)
+        text = self.__order_list_to_str(order_list)
         self.preo_db.del_room_order(room_id)
-        return Response.text(Response.REP_END_ORDERLIST)
+
+        return Response.text(Response.REP_END_ORDERLIST, room_order.list_name, text)
 
     @staticmethod
     def __order_print_user_item_amount(order):
         return "%s: %s %s" % (order.user_name, order.item_name, order.amount)
+
+    @staticmethod
+    def __order_list_to_str(order_list):
+        # Creating a dict mapping item name into a list of text list and total maount
+        # ex. "milk" : (["user1", "user3(2)"], 3)
+        order_dict = {}
+        for order in order_list:
+            item_name = order.item_name
+            amount = order.amount
+            text = order.user_name if amount == 1 else "%s(%d)" % (order.user_name, amount)
+            if item_name in order_dict:
+                order_dict[item_name][0].append(text)
+                order_dict[item_name][1] += amount
+            else:
+                order_dict[item_name] = [[text], amount]
+
+        order_text = ""
+        for item_name, args in order_dict.items():
+            order_text += "%s %d: %s\n" % (item_name, args[1], " ".join(args[0]))
+        return order_text.strip()
 
 """ deprecated code use for reference
 class Order:

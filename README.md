@@ -4,7 +4,7 @@
 
 Preo Bot is a chat bot for keeping orders on LINE platform. In a chat room, the bot will be your assistant when you and your friends need to collect meal orders.
 
-Version 0.0.3
+Version 1.0.0
 
 Logo by [zentinel](https://www.behance.net/zentinel)
 
@@ -63,21 +63,21 @@ A chat room can have only one existing order list at the same time.
 !new <order_name>
 ```
 
-- Add new item to the order list
+- Set new item to the order list
 
 ```
-!add <user_name> <item> <amount>
+!set <user_name> <item> <amount>
 ```
 
 **Remark** : This command will replace the existing item order.
 For example, Preo bot receives a sequence of command like this:
 
 ```
-!add Jack Milk 3
-!add Bob Milk 4
-!add Jack Milk 5
-!add Bob Milk 2
-!add Jack Milk 1
+!set Jack Milk 3
+!set Bob Milk 4
+!set Jack Milk 5
+!set Bob Milk 2
+!set Jack Milk 1
 ```
 Finally, the saved order for Jake will be 1 Milk and the saved order for Bob will be 2 Milk.
 
@@ -99,19 +99,29 @@ Finally, the saved order for Jake will be 1 Milk and the saved order for Bob wil
 !open
 ```
 
-- End the current order list. All orders will be cleared.
-
-```
-!end
-```
-
-- Show all items in the order list
+- Show all items in the order list. Each order is grouped by an item name and appended with its amount and a list of ordering users.
 
 ```
 !list
 ```
 
+Example list response
+
+```
+===== 7-11 Order Summary =====
+milk 4: Bob Jack(2) Mike
+cocoa 2: Zack Kate
+tea 3: Alice(3)
+```
+
+- End the current order list. Like list command, a summary of orders will be shown and orders will be cleared.
+
+```
+!end
+```
+
 - Show help message
+
 
 ```
 !help

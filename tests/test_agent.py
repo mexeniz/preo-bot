@@ -33,7 +33,7 @@ TEST_DB_PATH = "/tmp/test-preo-bot.db"
 
 def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("new") == BotCMD.NEW_ORDER
-    assert BotCMD.parse_command("add") == BotCMD.ADD_ORDER
+    assert BotCMD.parse_command("set") == BotCMD.SET_ORDER
     assert BotCMD.parse_command("del") == BotCMD.DEL_ORDER
     assert BotCMD.parse_command("list") == BotCMD.LIST_ORDER
     assert BotCMD.parse_command("close") == BotCMD.CLOSE_ORDER
@@ -46,7 +46,7 @@ def test_bot_cmd_parse_command():
     assert BotCMD.parse_command("NeW") == BotCMD.NEW_ORDER
     assert BotCMD.parse_command("lISt") == BotCMD.LIST_ORDER
     # Upper case
-    assert BotCMD.parse_command("ADD") == BotCMD.ADD_ORDER
+    assert BotCMD.parse_command("SET") == BotCMD.SET_ORDER
     assert BotCMD.parse_command("HELP") == BotCMD.HELP
 
 ###########################
@@ -69,7 +69,7 @@ def test_bot_group_parser():
     # Not match regex, return None
     assert GroupParser.parse_text_group("!a b c -1") == None
     assert GroupParser.parse_text_group("a b 5") == None
-    assert GroupParser.parse_text_group("!add user1 Steak 5 19") == None
+    assert GroupParser.parse_text_group("!set user1 Steak 5 19") == None
     # Single Command
     assert GroupParser.parse_text_group("!Help") == {"cmd": "Help"}
     assert GroupParser.parse_text_group("Help") == None
@@ -78,10 +78,10 @@ def test_bot_group_parser():
     # From Real Command
     assert GroupParser.parse_text_group("!new ploen") == {
         "cmd": "new", "name": "ploen"}
-    assert GroupParser.parse_text_group("!add food food 3") == {
-        "cmd": "add", "user_name": "food", "item": "food", "num": "3"}
-    assert GroupParser.parse_text_group("!add user1 Hamburger 5") == {
-        "cmd": "add", "user_name": "user1", "item": "Hamburger", "num": "5"}
+    assert GroupParser.parse_text_group("!set food food 3") == {
+        "cmd": "set", "user_name": "food", "item": "food", "num": "3"}
+    assert GroupParser.parse_text_group("!set user1 Hamburger 5") == {
+        "cmd": "set", "user_name": "user1", "item": "Hamburger", "num": "5"}
     assert GroupParser.parse_text_group("!del food food") == {
         "cmd": "del", "user_name": "food", "item": "food"}
     assert GroupParser.parse_text_group("!del food food 3") == {
@@ -100,10 +100,10 @@ def test_bot_group_parser():
     # Testing Thai Language
     assert GroupParser.parse_text_group("!new เพลิน") == {
         "cmd": "new", "name": "เพลิน"}
-    assert GroupParser.parse_text_group("!add แบ้ง อาหาร 3") == {
-        "cmd": "add", "user_name": "แบ้ง", "item": "อาหาร", "num": "3"}
-    assert GroupParser.parse_text_group("!add เอ็ม ผัดกะเพราหมูสับไม่ใส่กะเพรา 5") == {
-        "cmd": "add", "user_name": "เอ็ม", "item": "ผัดกะเพราหมูสับไม่ใส่กะเพรา", "num": "5"}
+    assert GroupParser.parse_text_group("!set แบ้ง อาหาร 3") == {
+        "cmd": "set", "user_name": "แบ้ง", "item": "อาหาร", "num": "3"}
+    assert GroupParser.parse_text_group("!set เอ็ม ผัดกะเพราหมูสับไม่ใส่กะเพรา 5") == {
+        "cmd": "set", "user_name": "เอ็ม", "item": "ผัดกะเพราหมูสับไม่ใส่กะเพรา", "num": "5"}
     assert GroupParser.parse_text_group("!del กิ๊กกัน โลกทั้งใบ") == {
         "cmd": "del", "user_name": "กิ๊กกัน", "item": "โลกทั้งใบ"}
     assert GroupParser.parse_text_group("!del คน มนุษย์ 3") == {
@@ -182,11 +182,11 @@ def test_agent_handle_new_order():
         room_id=TEST_ROOM_1, name=TEST_ORDER_1) != None
 
 
-def test_agent_handle_add_order():
+def test_agent_handle_set_order():
     agent = create_mock_agent()
     agent._Agent__handle_new_order(
         room_id=TEST_ROOM_1, name=TEST_ORDER_1)
-    assert agent._Agent__handle_add_order(
+    assert agent._Agent__handle_set_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1, amount=1) != None
 
 
@@ -194,7 +194,7 @@ def test_agent_handle_del_order():
     agent = create_mock_agent()
     agent._Agent__handle_new_order(
         room_id=TEST_ROOM_1, name=TEST_ORDER_1)
-    agent._Agent__handle_add_order(
+    agent._Agent__handle_set_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1, amount=1)
     assert agent._Agent__handle_del_order(
         room_id=TEST_ROOM_1, user_name=TEST_USER_NAME_1, item=TEST_ITEM_1) != None

@@ -17,7 +17,7 @@ class BotCMD():
     "Enum class for bot command"
     UNKNOWN_CMD = 0
     NEW_ORDER = 1
-    ADD_ORDER = 2
+    SET_ORDER = 2
     DEL_ORDER = 3
     LIST_ORDER = 4
     CLOSE_ORDER = 5
@@ -27,7 +27,7 @@ class BotCMD():
 
     CMD_DICT = {
         "new": NEW_ORDER,
-        "add": ADD_ORDER,
+        "set": SET_ORDER,
         "del": DEL_ORDER,
         "list": LIST_ORDER,
         "close": CLOSE_ORDER,
@@ -85,7 +85,7 @@ class GroupParser():
 
 class Agent():
     """Chatbot agent for handling incoming message event"""
-    HELP_MESSAGE = "\n".join(["Available PreoBot commands", "!new <list_name>", "!add <user_name> <item> <amount>",
+    HELP_MESSAGE = "\n".join(["Available PreoBot commands", "!new <list_name>", "!set <user_name> <item> <amount>",
                               "!del <user_name> <item>", "!end", "!open", "!close", "!list", "!help"])
 
     def __init__(self, **kwargs):
@@ -102,11 +102,11 @@ class Agent():
         """
         return self.room_orders.new_order(kwargs['room_id'], kwargs['name'])
 
-    def __handle_add_order(self, **kwargs):
+    def __handle_set_order(self, **kwargs):
         """
         Add an order from user into database with room_id, user_name, item and amount.
         """
-        return self.room_orders.add_item(kwargs['room_id'], kwargs['user_name'], kwargs['item'], kwargs['amount'])
+        return self.room_orders.set_item(kwargs['room_id'], kwargs['user_name'], kwargs['item'], kwargs['amount'])
 
 
     def __handle_del_order(self, **kwargs):
@@ -177,8 +177,8 @@ class Agent():
             if cmd == BotCMD.NEW_ORDER:
                 response = self.__handle_new_order(
                     room_id=room_id, name=group_text['name'])
-            elif cmd == BotCMD.ADD_ORDER:
-                response = self.__handle_add_order(room_id=room_id, user_name=group_text['user_name'],
+            elif cmd == BotCMD.SET_ORDER:
+                response = self.__handle_set_order(room_id=room_id, user_name=group_text['user_name'],
                                                    item=group_text['item'], amount=int(group_text['num']))
             elif cmd == BotCMD.DEL_ORDER:
                 response = self.__handle_del_order(room_id=room_id,
