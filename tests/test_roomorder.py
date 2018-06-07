@@ -32,9 +32,6 @@ TEST_AMOUNT_2 = 2
 # RoomOrder test cases
 ###########################
 
-def _mock_print_user_item_amount(item_name, amount, user_names):
-    return "%s %d: %s" % (item_name, amount, " ".join(user_names))
-
 def create_mock_roomorder():
     if os.path.exists(TEST_DB_PATH):
         # clean old test database before init new RoomOrder
@@ -111,13 +108,13 @@ def test_roomorder_update_item():
     reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_1)
     reply = room_order.list_order(TEST_ROOM_1)
-    text = _mock_print_user_item_amount(TEST_ITEM_1, TEST_AMOUNT_1, [TEST_USER_NAME_1])
+    text = "%s %d: %s" % (TEST_ITEM_1, TEST_AMOUNT_1, TEST_USER_NAME_1)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, TEST_ORDER_1, text)
     # Update existing item
     reply = room_order.set_item(TEST_ROOM_1, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
     assert reply == Response.text(Response.REP_SET_ITEM, TEST_USER_NAME_1, TEST_ITEM_1, TEST_AMOUNT_2)
     reply = room_order.list_order(TEST_ROOM_1)
-    text = _mock_print_user_item_amount(TEST_ITEM_1, TEST_AMOUNT_2, [TEST_USER_NAME_1])
+    text = "%s %d: %s(%d)" % (TEST_ITEM_1, TEST_AMOUNT_2, TEST_USER_NAME_1, TEST_AMOUNT_2)
     assert reply == Response.text(Response.REP_SUMMARY_ORDERLIST, TEST_ORDER_1, text)
 
 def test_roomorder_close_order_success():

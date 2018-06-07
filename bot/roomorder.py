@@ -52,12 +52,8 @@ class RoomOrder:
             print("Error: room order %s does not exist" % (room_id))
             return None
 
-        # TODO(M): Create summarized order list
-        text = ""
         order_list = self.preo_db.get_order_by_room(room_id)
-        for order in order_list:
-            text += self.__order_print_user_item_amount(order) + "\n"
-        text = text[:-1]
+        text = self.__order_list_to_str(order_list)
         return Response.text(Response.REP_SUMMARY_ORDERLIST, room_order.list_name, text)
 
     def close_order(self, room_id):
@@ -100,19 +96,35 @@ class RoomOrder:
             print("Error: room order %s does not exist" % (room_id))
             return None
 
-        # TODO(M): Create summarized order list
-        text = ""
         order_list = self.preo_db.get_order_by_room(room_id)
-        for order in order_list:
-            text += self.__order_print_user_item_amount(order) + "\n"
-        text = text[:-1]
+        text = self.__order_list_to_str(order_list)
         self.preo_db.del_room_order(room_id)
-        
+
         return Response.text(Response.REP_END_ORDERLIST, room_order.list_name, text)
 
     @staticmethod
     def __order_print_user_item_amount(order):
         return "%s: %s %s" % (order.user_name, order.item_name, order.amount)
+
+    @staticmethod
+    def __order_list_to_str(order_list):
+        # Creating a dict mapping item name into a list of text list and total maount
+        # ex. "milk" : (["user1", "user3(2)"], 3)
+        order_dict = {}
+        for order in order_list:
+            item_name = order.item_name
+            amount = order.amount
+            text = order.user_name if amount == 1 else "%s(%d)" % (order.user_name, amount)
+            if item_name in order_dict:
+                order_dict[item_name][0].append(text)
+                order_dict[item_name][1] += amount
+            else:
+                order_dict[item_name] = [[text], amount]
+
+        order_text = ""
+        for item_name, args in order_dict.items():
+            order_text += "%s %d: %s\n" % (item_name, args[1], " ".join(args[0]))
+        return order_text.strip()
 
 """ deprecated code use for reference
 class Order:
