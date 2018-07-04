@@ -4,7 +4,7 @@
 
 Preo Bot is a chat bot for keeping orders on LINE platform. In a chat room, the bot will be your assistant when you and your friends need to collect meal orders.
 
-Version 1.0.0
+Version 1.0.1
 
 Logo by [zentinel](https://www.behance.net/zentinel)
 
