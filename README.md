@@ -26,7 +26,7 @@ pip install line-bot-sdk flask pytest gunicorn
 #### Test
 
 We use pytest as a test runner.
-The name of test functions in 'tests' directory must begin with 'test' or else pytest cannot run those test cases.
+The name of test functions in 'tests' directory must begin with 'test_' or else pytest cannot run those test cases.
 
 ```
 cd tests

@@ -51,12 +51,12 @@ class GroupParser():
     Class for parsing text into several parts
     Support several regexes
     """
-
-    # TODO(M) : Fix reqex to support Thai item and user_name.
+    
+    # TODO(M): Use regex based on command instead
     order_regexes = [r"^!(\w+)$",
-                     r"^!(\w+) ([\u0E00-\u0E7F\w]+)$",
-                     r"^!(\w+) ([\u0E00-\u0E7F\w]+) ([\u0E00-\u0E7F\w]+)$",
-                     r"^!(\w+) ([\u0E00-\u0E7F\w]+) ([\u0E00-\u0E7F\w]+) (\d{1,})$"]
+                     r"^!(\w+) (([\u0E00-\u0E7F\w]|[&\- ])+)$",
+                     r"^!(\w+) (([\u0E00-\u0E7F\w]|[&\- ])+) (([\u0E00-\u0E7F\w]|[&\- ])+)$",
+                     r"^!(\w+) (([\u0E00-\u0E7F\w]|[&\- ])+) (([\u0E00-\u0E7F\w]|[&\- ])+) (\d{1,})$"]
     text_groups = [["cmd"],
                    ["cmd", "name"],
                    ["cmd", "user_name", "item"],
